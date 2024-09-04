@@ -34,8 +34,8 @@ export default {
   name: 'TablePage',
   setup() {
     const task = ref([]);
-
     onMounted(async () => {
+
       // Check if the user is authenticated
       const user = supabase.auth.getUser();
       console.log(user);

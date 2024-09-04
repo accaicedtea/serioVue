@@ -5,6 +5,5 @@
     </div>
 </template>
 
-<script>
-
+<script >
 </script>

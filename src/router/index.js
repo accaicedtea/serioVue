@@ -1,3 +1,7 @@
+import { createRouter, createWebHistory } from 'vue-router/auto'
+import { setupLayouts } from 'virtual:generated-layouts'
+import { routes } from 'vue-router/auto-routes'
+import { useAppStore } from '@/stores/app'
 /**
  * router/index.ts
  *
@@ -5,14 +9,24 @@
  */
 
 // Composables
-import { createRouter, createWebHistory } from 'vue-router/auto'
-import { setupLayouts } from 'virtual:generated-layouts'
-import { routes } from 'vue-router/auto-routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: setupLayouts(routes),
 })
+
+// Middleware per il controllo di autenticazione
+const authGuard = (to, from, next) => {
+  const auth = localStorage.getItem('auth');
+  if (to.path.startsWith('/admin') && !auth) {
+    console.log('Utente non autenticato');
+    next('/login');
+  } else {
+    next();
+  }
+}
+
+router.beforeEach(authGuard) // Aggiungi il middleware di controllo di autenticazione
 
 // Workaround for https://github.com/vitejs/vite/issues/11804
 router.onError((err, to) => {

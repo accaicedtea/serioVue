@@ -3,20 +3,19 @@
     <v-toolbar color="primary" title="User Profile">
     </v-toolbar>
 
-    <div class="d-flex flex-row" >
-      <v-tabs v-model="tab"  bg-color="purple-darken-4" direction="vertical">
-        <v-tab v-for="t in task" :key="t.id" :text="t.name" :value="t.name"></v-tab>
+    <div class="d-flex flex-row">
+      <v-tabs v-model="tab"  direction="vertical">
+        <v-tab v-for="c in cosa" :key="c.id" :text="c.nome" :value="c.nome"></v-tab>
       </v-tabs>
 
       <v-tabs-window v-model="tab">
-        <v-tabs-window-item v-for="t in task" :key="t.id" :value="t.name">
+        <v-tabs-window-item v-for="c in cosa" :key="c.id" :value="c.nome">
           <v-card flat>
             <v-card-text>
-              {{ t.id }} - {{ t.name }}
+              {{ c.id }} - {{ c.nome }} - {{ c.category }} - {{ c.action }}
             </v-card-text>
           </v-card>
         </v-tabs-window-item>
-
       </v-tabs-window>
     </div>
   </v-card>
@@ -26,35 +25,52 @@
 import { supabase } from '../plugins/supabase';
 
 export default {
-  name: 'TablePage',
+  nome: 'TablePage',
   data: () => ({
-      tab: null,
-    }),
+    tab: 0,
+  }),
   setup() {
-    const task = ref([]);
+    const cosa = ref([]);
+    const categorie = ref([]);
+    const categorieError = ref(null);
 
     onMounted(async () => {
-      // Check if the user is authenticated
+      // Controlla se l'utente è autenticato
       const user = supabase.auth.getUser();
       console.log(user);
       if (!user) {
-        // Redirect to the login page
+        // Reindirizza alla pagina di login
         router.push('/login');
         return;
       }
 
-      const { data, error } = await supabase.from('task').select();
+      const { data, error } = await supabase.from('cosa').select();
+
       if (error) {
         console.error(error);
       } else {
-        task.value = data;
+        cosa.value = data;
         console.log(data);
+      }
+      const { data: categorieData, error: categorieErrorData } = await supabase
+        .from('task')
+        .select('categoria')
+        .groupBy('categoria');
+
+      if (categorieErrorData) {
+        console.error(categorieErrorData);
+      } else {
+        categorie.value = categorieData;
+        console.log(categorieData);
       }
     });
 
     const changeState = async (id) => {
-      // Send the id to the server and change the state
-      const { data, error } = await supabase.from('task').update({ status: !task.value.find(t => t.id === id).status }).eq('id', id);
+      // Invia l'id al server e cambia lo stato
+      const { data, error } = await supabase
+        .from('cosa')
+        .update({ action: !cosa.value.find(c => c.id === id).action })
+        .eq('id', id);
       if (error) {
         console.error(error);
       } else {
@@ -63,9 +79,12 @@ export default {
     };
 
     return {
-      task,
+      cosa,
       changeState,
     };
   },
 };
 </script>
+
+
+

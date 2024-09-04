@@ -14,7 +14,7 @@
                 </v-card>
             </v-col>
         </v-row>
-        <v-btn @click="seeCurrentUser">guarda</v-btn>
+        <v-btn @click="see">guarda</v-btn>
     </v-container>
 
 </template>
@@ -44,11 +44,7 @@ export default {
               // Handle login error
           } else {
               // User logged in successfully
-              //console.log(user)
-              // Redirect to another page or perform other actions
-
-              // Save authenticated state using Pinia
-
+              localStorage.setItem('auth', 'true');
           }
             } catch (error) {
           console.error(error)
@@ -66,6 +62,10 @@ export default {
                 appStore.logout();
             }
 
+        },
+        async see(){
+          const appStore = useAppStore()
+          console.log(appStore.isAuthenticated)
         }
     }
 }
