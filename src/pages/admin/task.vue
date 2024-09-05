@@ -26,7 +26,7 @@
                     <v-text-field v-model="editedItem.category" label="Categoria"></v-text-field>
                   </v-col>
                     <v-col>
-                    <v-text-field v-model="editedItem.stato" label="stato" :value="0"></v-text-field>
+                    <v-text-field v-model="editedItem.stat" label="stato" ></v-text-field>
                     </v-col>
                 </v-row>
               </v-container>
@@ -87,8 +87,8 @@ export default {
         sortable: false,
         key: 'name',
       },
-      { title: 'Categoria', key: 'categoria' },
-      { title: 'Stato', key: 'stato' },
+      { title: 'Categoria', key: 'category' },
+      { title: 'Stato', key: 'stat' },
       { title: 'Actions', key: 'actions', sortable: false },
     ],
     desserts: [],
@@ -126,59 +126,13 @@ export default {
 
   methods: {
     initialize() {
-      this.desserts = [
-        {
-          name: 'Frozen Yogurt',
-          categoria: 'Dessert',
-          stato: true,
-        },
-        {
-          name: 'Ice cream sandwich',
-          categoria: 'Dessert',
-          stato: true,
-        },
-        {
-          name: 'Eclair',
-          categoria: 'Dessert',
-          stato: true,
-        },
-        {
-          name: 'Cupcake',
-          categoria: 'Dessert',
-          stato: true,
-        },
-        {
-          name: 'Gingerbread',
-          categoria: 'Dessert',
-          stato: true,
-        },
-        {
-          name: 'Jelly bean',
-          categoria: 'Caramelle',
-          stato: true,
-        },
-        {
-          name: 'Lollipop',
-          categoria: 'Caramelle',
-          stato: true,
-        },
-        {
-          name: 'Honeycomb',
-          categoria: 'Dessert',
-          stato: true,
-        },
-        {
-          name: 'Donut',
-          categoria: 'Dessert',
-          stato: true,
-        },
-        {
-          name: 'KitKat',
-          categoria: 'Cioccolato',
-          stato: true,
-        },
-
-      ]
+      this.desserts;
+      supabase
+            .from('task')
+            .select('name, category, stat')
+            .then(response => {
+              this.desserts = response.data;
+            });
     },
 
     editItem(item) {
@@ -222,15 +176,14 @@ export default {
           this.desserts.push(this.editedItem);
           supabase
             .from('task')
-            .insert([
-              {
-                name: this.editedItem.name,
-                categoria: parseInt(this.editedItem.category),
-                status: this.editedItem.stato
+            .insert([{
+                name: "ZZZZZZZZZZZZZZZZZZZZZZZZZ",
+                category: 1,
+                stat: false
               }
             ])
-            .then(response => {
-              console.log('New task created:', response.data[0]);
+            .then(stauts => {
+              console.log('New task created');
             })
             .catch(error => {
               console.error('Error creating task:', error);

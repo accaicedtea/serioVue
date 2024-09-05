@@ -22,7 +22,7 @@ export default {
   components: {},
   data() {
     return {
-      auth: localStorage.getItem('auth') === 'true', // Retrieve the auth value from local storage
+      auth: localStorage.getItem('auth') == 'true', // Retrieve the auth value from local storage
     };
   },
   methods: {

@@ -5,14 +5,14 @@
 
     <div class="d-flex flex-row">
       <v-tabs v-model="tab"  direction="vertical">
-        <v-tab v-for="c in cosa" :key="c.id" :text="c.nome" :value="c.nome"></v-tab>
+        <v-tab v-for="c in cosa" :key="c.id" :text="c.name" :value="c.name"></v-tab>
       </v-tabs>
 
       <v-tabs-window v-model="tab">
-        <v-tabs-window-item v-for="c in cosa" :key="c.id" :value="c.nome">
+        <v-tabs-window-item v-for="c in cosa" :key="c.id" :value="c.name">
           <v-card flat>
             <v-card-text>
-              {{ c.id }} - {{ c.nome }} - {{ c.category }} - {{ c.action }}
+              {{ c.id }} - {{ c.name }} - {{ c.category }} - {{ c.action }}
             </v-card-text>
           </v-card>
         </v-tabs-window-item>
@@ -44,7 +44,7 @@ export default {
         return;
       }
 
-      const { data, error } = await supabase.from('cosa').select();
+      const { data, error } = await supabase.from('product').select();
 
       if (error) {
         console.error(error);
@@ -54,7 +54,7 @@ export default {
       }
       const { data: categorieData, error: categorieErrorData } = await supabase
         .from('task')
-        .select('categoria');
+        .select('category');
 
       if (categorieErrorData) {
         console.error(categorieErrorData);
@@ -67,7 +67,7 @@ export default {
     const changeState = async (id) => {
       // Invia l'id al server e cambia lo stato
       const { data, error } = await supabase
-        .from('cosa')
+        .from('product')
         .update({ action: !cosa.value.find(c => c.id === id).action })
         .eq('id', id);
       if (error) {
