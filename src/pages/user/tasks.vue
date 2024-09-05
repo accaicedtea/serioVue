@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { supabase } from '../plugins/supabase';
+import { supabase } from '../../plugins/supabase';
 
 export default {
   name: 'TablePage',

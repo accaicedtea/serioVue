@@ -18,7 +18,7 @@ const router = createRouter({
 // Middleware per il controllo di autenticazione
 const authGuard = (to, from, next) => {
   const auth = localStorage.getItem('auth');
-  if (to.path.startsWith('/admin') && !auth) {
+  if ((to.path.startsWith('/admin') || to.path.startsWith('/user')) && !auth) {
     console.log('Utente non autenticato');
     next('/login');
   } else {

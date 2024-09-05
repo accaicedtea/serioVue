@@ -45,6 +45,7 @@ export default {
           } else {
               // User logged in successfully
               localStorage.setItem('auth', 'true');
+              this.$router.push('/user/tasks');
           }
             } catch (error) {
           console.error(error)

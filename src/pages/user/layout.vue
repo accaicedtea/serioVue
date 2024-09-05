@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { supabase } from '../plugins/supabase';
+import { supabase } from '../../plugins/supabase';
 
 export default {
   nome: 'TablePage',
@@ -54,8 +54,7 @@ export default {
       }
       const { data: categorieData, error: categorieErrorData } = await supabase
         .from('task')
-        .select('categoria')
-        .groupBy('categoria');
+        .select('categoria');
 
       if (categorieErrorData) {
         console.error(categorieErrorData);
