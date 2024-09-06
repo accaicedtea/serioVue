@@ -14,7 +14,7 @@
                 </v-card>
             </v-col>
         </v-row>
-        <v-btn @click="see">guarda</v-btn>
+        <v-btn @click="logout">logout</v-btn>
     </v-container>
 
 </template>
@@ -44,7 +44,6 @@ export default {
               // Handle login error
           } else {
               // User logged in successfully
-              localStorage.setItem('auth', 'true');
               this.$router.push('/user/tasks');
           }
             } catch (error) {
@@ -52,21 +51,15 @@ export default {
           // Handle login error
             }
         },
-        async seeCurrentUser() {
-            const localU = await supabase.auth.getSession();
-            console.log(localU);
-            const {error} = await supabase.auth.signOut();
-            if(error){
-                console.log(error);
-            }else{
-                console.log("logout effettuato");
-                appStore.logout();
-            }
-
-        },
-        async see(){
-          const appStore = useAppStore()
-          console.log(appStore.isAuthenticated)
+        async logout() {
+          const { data, error } = await supabase.auth.signOut();
+          if (error) {
+            console.error(error);
+            // Handle logout error
+          } else {
+            console.log("Logout successful");
+            // Perform any additional actions after logout
+          }
         }
     }
 }

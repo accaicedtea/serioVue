@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router/auto'
 import { setupLayouts } from 'virtual:generated-layouts'
 import { routes } from 'vue-router/auto-routes'
 import { useAppStore } from '@/stores/app'
+import { supabase } from '@/plugins/supabase'
 /**
  * router/index.ts
  *
@@ -16,10 +17,19 @@ const router = createRouter({
 })
 
 // Middleware per il controllo di autenticazione
-const authGuard = (to, from, next) => {
-  const auth = localStorage.getItem('auth');
-  if ((to.path.startsWith('/admin') || to.path.startsWith('/user')) && !auth) {
-    console.log('Utente non autenticato');
+const authGuard = async (to, from, next) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user != null && (to.path.startsWith('/admin') || to.path.startsWith('/user'))) {
+    const roles = user.role;
+    if (roles.includes('authenticated')) {
+      console.log('Utente autorizzato');
+      next();
+    } else {
+      console.log('Utente non autorizzato');
+      next('/login');
+    }
+  } else if (user == null && (to.path.startsWith('/admin') || to.path.startsWith('/user'))) {
+    console.log('Utente non autorizzato');
     next('/login');
   } else {
     next();
