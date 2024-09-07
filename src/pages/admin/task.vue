@@ -1,8 +1,8 @@
 <template>
-  <v-data-table :headers="headers" :items="desserts" :sort-by="[{ key: 'name', order: 'asc' }]">
+  <v-data-table hide-default-footer :headers="headers" :items="desserts" :sort-by="[{ key: 'name', order: 'asc' }] ">
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>Task</v-toolbar-title>
+        <v-toolbar-title>Task 1</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
@@ -26,7 +26,8 @@
                     <v-text-field v-model="editedItem.category" label="Categoria"></v-text-field>
                   </v-col>
                     <v-col>
-                    <v-text-field v-model="editedItem.stat" label="stato" ></v-text-field>
+                    <v-checkbox v-model="editedItem.stat" label="fatto?"></v-checkbox>
+
                     </v-col>
                 </v-row>
               </v-container>
@@ -84,7 +85,6 @@ export default {
       {
         title: 'Name',
         align: 'start',
-        sortable: false,
         key: 'name',
       },
       { title: 'Categoria', key: 'category' },
