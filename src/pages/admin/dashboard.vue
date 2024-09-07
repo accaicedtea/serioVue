@@ -25,6 +25,7 @@ import Magazine from "@/pages/admin/magazine.vue";
 import Product from "@/pages/admin/product.vue";
 import Task from "@/pages/admin/task.vue";
 import { supabase } from "@/plugins/supabase";
+
 export default {
   data: () => ({
     selectedMenuItem: "task",

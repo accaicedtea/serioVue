@@ -121,6 +121,7 @@ export default {
   methods: {
     initialize() {
       this.desserts;
+      console.log("query");
       supabase.from('magazine').select('name, mq,description').then(response => {
               this.desserts = response.data;
             });
