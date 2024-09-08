@@ -1,15 +1,26 @@
 <template>
-  <v-data-table-virtual :headers="headers" :items="boats" height="400" item-value="magazine">
+  <v-text-field v-model="search" density="compact" label="Search" prepend-inner-icon="mdi-magnify" variant="solo-filled"
+    flat hide-details single-line></v-text-field>
+
+    <v-divider></v-divider>
+
+  <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats" :custom-filter="customFilter" :search="search" height="400" item-value="prodotto"
+    class="text-h5">
+    <template v-slot:item.quantity="{ value }">
+      <v-chip variant="elevated" size="x-large" :color="getColor(value)">
+        {{ value }}
+      </v-chip>
+    </template>
     <template v-slot:item.actions="{ item }">
-      <v-btn @click="incrementQuantity(item)" text>
-        <v-icon color="red">
-        mdi-plus
-      </v-icon>
+      <v-btn rounded="lg" elevation="4" @click="incrementQuantity(item)" text color="green" class="me-2">
+        <v-icon color="black">
+          mdi-plus
+        </v-icon>
       </v-btn>
-      <v-btn @click="decrementQuantity(item)" text>
-        <v-icon color="green">
-        mdi-minus
-      </v-icon>
+      <v-btn @click="decrementQuantity(item)" text color="red">
+        <v-icon color="black">
+          mdi-minus
+        </v-icon>
       </v-btn>
     </template>
   </v-data-table-virtual>
@@ -20,14 +31,16 @@ import { supabase } from '@/plugins/supabase'
 export default {
   data() {
     return {
+      search: '',
       headers: [
         {
           title: 'Magazine',
           align: 'start',
           key: 'magazine',
+          sortable: false
         },
-        { title: 'prodotto', key: 'product' },
-        { title: 'quantità', key: 'quantity' },
+        { title: 'Prodotto', key: 'product', sortable: false },
+        { title: 'Quantità', key: 'quantity', sortable: false },
         { title: 'Actions', key: 'actions', sortable: false },
       ],
       boats: [],
@@ -41,17 +54,33 @@ export default {
     initialize() {
       this.boats;
       console.log("query");
-      supabase.from('see_magazine').select('*').then(response => {
+      supabase.from('see_magazineee').select('*').then(response => {
         this.boats = response.data;
       });
     },
     incrementQuantity(item) {
       item.quantity++;
+
     },
     decrementQuantity(item) {
       if (item.quantity > 0) {
         item.quantity--;
       }
+    },
+    getColor(quantity) {
+      if (quantity >= 10) return 'light-green-accent-2'
+      else if (quantity >= 1 && quantity <= 9) return 'orange-lighten-1'
+      else return 'red-darken-3'
+    },
+    customFilter(value, query, item) {
+      return value != null &&
+        query != null &&
+        typeof value === 'string' &&
+        value.toString().indexOf(query) !== -1 ||
+        item.product != null &&
+        query != null &&
+        typeof item.product === 'string' &&
+        item.product.toString().indexOf(query) !== -1;
     },
   }
 }
