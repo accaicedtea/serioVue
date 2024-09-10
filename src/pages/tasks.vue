@@ -1,41 +1,9 @@
 <template>
-  <div class="d-flex flex-row">
-    <v-tabs v-model="tab" direction="vertical">
-      <v-tab v-for="c in category" :key="c.name" :text="c.name"></v-tab>
-    </v-tabs>
 
-    <v-tabs-window v-model="tab">
-      <v-tabs-window-item v-for="c in fakeData" :key="c.name" :value="c.name">
-        <v-table  loading-text="Loading... Please wait"
-        loading>
-          <thead>
-            <tr>
-              <th class="text-left">
-                ID
-              </th>
-              <th class="text-left">
-                Nome
-              </th>
-              <th class="text-left">
-                Status
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr >
-              <td>{{ c.id }}</td>
-              <td>{{ c.name }}</td>
-              <td><input type="checkbox" v-model="c.status"></td>
-            </tr>
-          </tbody>
-        </v-table>
-      </v-tabs-window-item>
-    </v-tabs-window>
-  </div>
 </template>
 
 <script>
-import { supabase } from '../../plugins/supabase';
+import { supabase } from '../plugins/supabase';
 
 export default {
   name: 'TablePage',

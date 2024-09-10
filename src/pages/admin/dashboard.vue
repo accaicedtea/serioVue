@@ -1,18 +1,32 @@
 <template>
-  <v-navigation-drawer floating permanent class="bg-deep-purple">
+
+  <v-navigation-drawer v-model="drawer" :rail="rail" permanent @click="rail = false" class="bg-deep-purple">
+
+    <v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg" title="John Leider" nav>
+      <template v-slot:append>
+        <v-btn icon="mdi-chevron-left" variant="text" @click.stop="rail = !rail"></v-btn>
+      </template>
+    </v-list-item>
+
+    <v-divider></v-divider>
+
     <v-list density="compact" nav>
       <v-list-item v-for="item in menuItems" :key="item.value" :prepend-icon="item.icon" :title="item.title"
         :value="item.value" @click="selectMenuItem(item.value)"></v-list-item>
     </v-list>
+
     <template v-slot:append>
-      <div class="pa-2">
-        <v-btn block @click="logout()">
-          Logout
-        </v-btn>
-      </div>
+      <v-list density="compact" nav>
+        <v-list-item @click="logout()">
+          <template v-slot:prepend>
+            <v-icon icon="mdi-logout"></v-icon>
+          </template>
+          <v-list-item-title text="Logout">Logout</v-list-item-title>
+        </v-list-item>
+      </v-list>
     </template>
   </v-navigation-drawer>
-
+  
   <v-container>
     <h1>Main Content</h1>
     <component :is="selectedMenuItem"></component>
@@ -21,13 +35,15 @@
 </template>
 
 <script>
-import Magazine from "@/pages/admin/magazine.vue";
-import Product from "@/pages/admin/product.vue";
-import Task from "@/pages/admin/task.vue";
+import Magazine from "@/components/admin/magazine.vue";
+import Product from "@/components/admin/product.vue";
+import Task from "@/components/admin/task.vue";
 import { supabase } from "@/plugins/supabase";
 
 export default {
   data: () => ({
+    drawer: true,
+    rail: true,
     selectedMenuItem: "task",
     menuItems: [
       { title: "Task", value: "task", icon: "mdi-calendar-check-outline" },

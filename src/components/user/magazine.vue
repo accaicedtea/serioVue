@@ -1,24 +1,24 @@
 <template>
   <v-text-field v-model="search" density="compact" label="Search" prepend-inner-icon="mdi-magnify" variant="solo-filled"
-    flat hide-details single-line></v-text-field>
+    flat hide-details single-line class="mb-2"></v-text-field>
 
-    <v-divider></v-divider>
+  <v-divider></v-divider>
 
-  <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats" :custom-filter="customFilter" :search="search" height="400" item-value="prodotto"
-    class="text-h5">
+  <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats" :custom-filter="customFilter"
+    :search="search" height="400" item-value="prodotto" class="text-h5">
     <template v-slot:item.quantity="{ value }">
-      <v-chip variant="elevated" size="x-large" :color="getColor(value)">
+      <v-chip variant="elevated" size="x-large" :color="getColor(value)" class="text-center">
         {{ value }}
       </v-chip>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-btn rounded="lg" elevation="4" @click="incrementQuantity(item)" text color="green" class="me-2">
-        <v-icon color="black">
+      <v-btn rounded="lg" elevation="4" @click="incrementQuantity(item)" text color="green-lighten-1" class="me-2">
+        <v-icon>
           mdi-plus
         </v-icon>
       </v-btn>
-      <v-btn @click="decrementQuantity(item)" text color="red">
-        <v-icon color="black">
+      <v-btn @click="decrementQuantity(item)" text color="red-accent-4">
+        <v-icon>
           mdi-minus
         </v-icon>
       </v-btn>
@@ -37,10 +37,10 @@ export default {
           title: 'Magazine',
           align: 'start',
           key: 'magazine',
-          sortable: false
+          sortable: true
         },
-        { title: 'Prodotto', key: 'product', sortable: false },
-        { title: 'Quantità', key: 'quantity', sortable: false },
+        { title: 'Prodotto', key: 'product', sortable: true },
+        { title: 'Quantità', key: 'quantity', sortable: true },
         { title: 'Actions', key: 'actions', sortable: false },
       ],
       boats: [],
@@ -81,6 +81,13 @@ export default {
         query != null &&
         typeof item.product === 'string' &&
         item.product.toString().indexOf(query) !== -1;
+    },
+    loadItems() {
+      this.loading = true
+      FakeAPI.fetch().then(({ items, total }) => {
+        this.boats = items
+        this.loading = false
+      })
     },
   }
 }

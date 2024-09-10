@@ -1,20 +1,12 @@
 <template>
-  <v-system-bar>
-    <v-icon icon="mdi-wifi-strength-4"></v-icon>
-    <v-icon icon="mdi-signal" class="ms-2"></v-icon>
-    <v-icon icon="mdi-battery" class="ms-2"></v-icon>
 
-    <span class="ms-2">{{ getCurrentTime() }}ciao</span>
-  </v-system-bar>
 
-  <v-container class="center">
-    <router-link to="/login">
-      <v-btn variant="outlined">Login</v-btn>
-    </router-link>
-    <router-link to="/register">
-      <v-btn variant="outlined">Register</v-btn>
-    </router-link>
-  </v-container>
+  <router-link to="/login">
+    <v-btn variant="outlined">Login</v-btn>
+  </router-link>
+  <router-link to="/register">
+    <v-btn variant="outlined">Register</v-btn>
+  </router-link>
 
 
 </template>
