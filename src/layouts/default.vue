@@ -4,11 +4,11 @@
     <v-toolbar-title>{{ auth ? 'Admin' : 'myapp' }}</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-btn v-if="!auth" to="/">Home</v-btn>
-    <v-btn v-if="auth" @click="logout()">logout</v-btn>
+    <v-btn v-if="auth" @click="logout">logout</v-btn>
     <v-btn v-else to="/login">Login</v-btn>
   </v-app-bar>
 
-  <v-main >
+  <v-main>
     <router-view />
   </v-main>
 
@@ -16,7 +16,7 @@
 
 
 <script>
-import { supabase } from '../plugins/supabase';
+import { supabase } from '@/plugins/supabase';
 
 export default {
   name: 'DefaultLayout',
@@ -38,14 +38,16 @@ export default {
       this.auth = true; // Set auth to true if user exists
     }
   },
-  async logout() {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error(error);
-    } else {
-      console.log("Logout successful");
-      this.$router.push('/login');
-    }
+  methods: {
+    async logout() {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error(error);
+      } else {
+        console.log("Logout successful");
+        this.$router.push('/login');
+      }
+    },
   }
 }
 </script>

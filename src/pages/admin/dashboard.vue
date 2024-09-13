@@ -1,5 +1,4 @@
 <template>
-
   <v-navigation-drawer v-model="drawer" :rail="rail" permanent @click="rail = false" class="bg-deep-purple">
 
     <v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg" title="John Leider" nav>
@@ -10,13 +9,13 @@
 
     <v-divider></v-divider>
 
-    <v-list density="compact" nav>
+    <v-list nav>
       <v-list-item v-for="item in menuItems" :key="item.value" :prepend-icon="item.icon" :title="item.title"
         :value="item.value" @click="selectMenuItem(item.value)"></v-list-item>
     </v-list>
 
     <template v-slot:append>
-      <v-list density="compact" nav>
+      <v-list nav>
         <v-list-item @click="logout()">
           <template v-slot:prepend>
             <v-icon icon="mdi-logout"></v-icon>
@@ -26,11 +25,11 @@
       </v-list>
     </template>
   </v-navigation-drawer>
-  
-  <v-container>
-    <h1>Main Content</h1>
-    <component :is="selectedMenuItem"></component>
-  </v-container>
+
+
+
+  <component :is="selectedMenuItem"></component>
+
 
 </template>
 
@@ -38,6 +37,7 @@
 import Magazine from "@/components/admin/magazine.vue";
 import Product from "@/components/admin/product.vue";
 import Task from "@/components/admin/task.vue";
+import Scontrino from "@/components/admin/scontrino.vue";
 import { supabase } from "@/plugins/supabase";
 
 export default {
@@ -49,6 +49,7 @@ export default {
       { title: "Task", value: "task", icon: "mdi-calendar-check-outline" },
       { title: "Prodotti", value: "product", icon: "mdi mdi-chart-ppf" },
       { title: "Magazzini", value: "magazine", icon: "mdi mdi-magazine-rifle" },
+      { title: "Scontrino", value: "scontrino", icon: "mdi mdi-receipt" },
     ],
   }),
 
@@ -56,6 +57,7 @@ export default {
     Magazine,
     Product,
     Task,
+    Scontrino,
   },
 
   methods: {

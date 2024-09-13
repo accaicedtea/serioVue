@@ -34,9 +34,9 @@ export default {
       search: '',
       headers: [
         {
-          title: 'Magazine',
+          title: 'Task',
           align: 'start',
-          key: 'magazine',
+          key: 'task',
           sortable: true
         },
         { title: 'Prodotto', key: 'product', sortable: true },

@@ -2,13 +2,13 @@
   <v-data-table :headers="headers" :items="desserts" :sort-by="[{ key: 'name', order: 'asc' }]">
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>Task</v-toolbar-title>
+        <v-toolbar-title>Prodotti</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ props }">
             <v-btn class="mb-2" color="primary" dark v-bind="props">
-              Nuova attività
+              Nuovo prodotto
             </v-btn>
           </template>
           <v-card>
@@ -87,7 +87,8 @@ export default {
         sortable: false,
         key: 'name',
       },
-      { title: 'Categoria', key: 'category' },
+      { title : 'Prezzo', key: 'price' },
+      { title: 'Quantità Max', key: 'max_quantity' },
       { title: 'Actions', key: 'actions', sortable: false },
     ],
     desserts: [],
@@ -128,7 +129,7 @@ export default {
       this.desserts;
       supabase
             .from('product')
-            .select('name, category')
+            .select('name, price, max_quantity')
             .then(response => {
               this.desserts = response.data;
             });
