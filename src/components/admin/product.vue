@@ -19,15 +19,15 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col >
+                  <v-col>
                     <v-text-field v-model="editedItem.name" label="Name"></v-text-field>
                   </v-col>
-                  <v-col >
-                    <v-text-field v-model="editedItem.category" label="Categoria"></v-text-field>
+                  <v-col>
+                    <v-text-field v-model="editedItem.price" label="Prezzo"></v-text-field>
                   </v-col>
-                    <v-col>
-                    <v-text-field v-model="editedItem.stat" label="stato" :value="0"></v-text-field>
-                    </v-col>
+                  <v-col>
+                    <v-text-field v-model="editedItem.max_quantity" label="Quanità massima"></v-text-field>
+                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -87,7 +87,7 @@ export default {
         sortable: false,
         key: 'name',
       },
-      { title : 'Prezzo', key: 'price' },
+      { title: 'Prezzo', key: 'price' },
       { title: 'Quantità Max', key: 'max_quantity' },
       { title: 'Actions', key: 'actions', sortable: false },
     ],
@@ -128,11 +128,11 @@ export default {
     initialize() {
       this.desserts;
       supabase
-            .from('product')
-            .select('name, price, max_quantity')
-            .then(response => {
-              this.desserts = response.data;
-            });
+        .from('product')
+        .select('name, price, max_quantity')
+        .then(response => {
+          this.desserts = response.data;
+        });
     },
 
     editItem(item) {
@@ -177,10 +177,10 @@ export default {
           supabase
             .from('product')
             .insert([{
-                name: "ZZZZZZZZZZZZZZZZZZZZZZZZZ",
-                category: 1,
-                stat: false
-              }
+              name: "ZZZZZZZZZZZZZZZZZZZZZZZZZ",
+              category: 1,
+              stat: false
+            }
             ])
             .then(stauts => {
               console.log('New task created');

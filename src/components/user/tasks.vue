@@ -5,23 +5,9 @@
   <v-divider></v-divider>
 
   <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats" :custom-filter="customFilter"
-    :search="search" height="400" item-value="prodotto" class="text-h5">
-    <template v-slot:item.quantity="{ value }">
-      <v-chip variant="elevated" size="x-large" :color="getColor(value)" class="text-center">
-        {{ value }}
-      </v-chip>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-btn rounded="lg" elevation="4" @click="incrementQuantity(item)" text color="green-lighten-1" class="me-2">
-        <v-icon>
-          mdi-plus
-        </v-icon>
-      </v-btn>
-      <v-btn @click="decrementQuantity(item)" text color="red-accent-4">
-        <v-icon>
-          mdi-minus
-        </v-icon>
-      </v-btn>
+    :search="search" height="400" item-value="name" class="text-h5">
+    <template v-slot:item.stat="{ item }">
+      <v-checkbox v-model="item.stat" hide-details></v-checkbox>
     </template>
   </v-data-table-virtual>
 </template>
@@ -36,12 +22,11 @@ export default {
         {
           title: 'Task',
           align: 'start',
-          key: 'task',
+          key: 'name',
           sortable: true
         },
-        { title: 'Prodotto', key: 'product', sortable: true },
-        { title: 'Quantità', key: 'quantity', sortable: true },
-        { title: 'Actions', key: 'actions', sortable: false },
+        { title: 'Categoria', key: 'category', sortable: true },
+        { title: 'Stato', key: 'stat', sortable: true },
       ],
       boats: [],
     }
@@ -54,23 +39,9 @@ export default {
     initialize() {
       this.boats;
       console.log("query");
-      supabase.from('see_magazineee').select('*').then(response => {
+      supabase.from('task').select('name,category,stat').then(response => {
         this.boats = response.data;
       });
-    },
-    incrementQuantity(item) {
-      item.quantity++;
-
-    },
-    decrementQuantity(item) {
-      if (item.quantity > 0) {
-        item.quantity--;
-      }
-    },
-    getColor(quantity) {
-      if (quantity >= 10) return 'light-green-accent-2'
-      else if (quantity >= 1 && quantity <= 9) return 'orange-lighten-1'
-      else return 'red-darken-3'
     },
     customFilter(value, query, item) {
       return value != null &&

@@ -44,7 +44,7 @@ export default {
               // Handle login error
           } else {
               // User logged in successfully
-              this.$router.push('/admin/dashboard');
+              this.$router.push('/tasks');
           }
             } catch (error) {
           console.error(error)

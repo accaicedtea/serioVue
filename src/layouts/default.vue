@@ -8,9 +8,9 @@
     <v-btn v-else to="/login">Login</v-btn>
   </v-app-bar>
 
-  <v-main>
-    <router-view />
-  </v-main>
+
+  <router-view />
+
 
 </template>
 

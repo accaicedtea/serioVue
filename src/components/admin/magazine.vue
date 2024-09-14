@@ -2,7 +2,7 @@
   <v-data-table :headers="headers" :items="desserts" :sort-by="[{ key: 'name', order: 'asc' }]">
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>Task</v-toolbar-title>
+        <v-toolbar-title>Magazzini</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
@@ -19,10 +19,10 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col >
+                  <v-col>
                     <v-text-field v-model="editedItem.name" label="Name"></v-text-field>
                   </v-col>
-                  <v-col >
+                  <v-col>
                     <v-text-field v-model="editedItem.mq" label="Mq"></v-text-field>
                   </v-col>
                 </v-row>
@@ -84,7 +84,6 @@ export default {
         key: 'name',
       },
       { title: 'mq', key: 'mq' },
-      { title: 'description', key: 'description' },
       { title: 'Actions', key: 'actions', sortable: false },
     ],
     desserts: [],
@@ -122,9 +121,9 @@ export default {
     initialize() {
       this.desserts;
       console.log("query");
-      supabase.from('magazine').select('name, mq,description').then(response => {
-              this.desserts = response.data;
-            });
+      supabase.from('magazine').select('name, mq').then(response => {
+        this.desserts = response.data;
+      });
     },
 
     editItem(item) {
@@ -160,26 +159,23 @@ export default {
       })
     },
 
-    save() {
+    async save() {
+      console.log("sto creando", this.editedItem);
       if (this.editedIndex > -1) {
         Object.assign(this.desserts[this.editedIndex], this.editedItem)
       } else {
-        if (this.editedItem.name && this.editedItem.category) {
+        if (this.editedItem.name && this.editedItem.mq) {
           this.desserts.push(this.editedItem);
-          supabase
+          const { data, error } = await supabase
             .from('magazine')
-            .insert([{
-                name: "ZZZZZZZZZZZZZZZZZZZZZZZZZ",
-                category: 1,
-                stat: false
-              }
+            .insert([
+              { name: this.editedItem.name, mq: this.editedItem.mq },
             ])
-            .then(stauts => {
-              console.log('New task created');
-            })
-            .catch(error => {
-              console.error('Error creating task:', error);
-            });
+          if (error) {
+            console.error('Error inserting new row:', error.message)
+          } else {
+            console.log('Row inserted:', data)
+          }
         }
       }
       this.close()

@@ -1,27 +1,17 @@
 <template>
-  <v-navigation-drawer v-model="drawer" :rail="rail" permanent @click="rail = false">
-    <v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg" title="John Leider" nav>
-      <template v-slot:append>
-        <v-btn icon="mdi-chevron-left" variant="text" @click.stop="rail = !rail"></v-btn>
-      </template>
-    </v-list-item>
+  <v-bottom-navigation v-model="value" :bg-color="color" grow>
+    <v-btn v-for="item in menuItems" :key="item.value" @click="selectMenuItem(item.value)">
+      <v-icon>{{ item.icon }}</v-icon>
+      <span>{{ item.title }}</span>
+    </v-btn>
+    <v-btn @click="$router.push('/admin/dashboard')">
+      <v-icon>mdi mdi-account</v-icon>
+      <span>Admin Area</span>
+    </v-btn>
+  </v-bottom-navigation>
 
-    <v-divider></v-divider>
+  <component :is="selectedMenuItem"></component>
 
-    <v-list density="compact" nav>
-      <v-list-item prepend-icon="mdi-home-city" title="Home" value="home" to="/"></v-list-item>
-
-      <v-list-item v-for="item in menuItems" :key="item.value" :value="item.value" @click="selectMenuItem(item.value)">
-        <v-list-item-title>{{ item.title }}</v-list-item-title>
-      </v-list-item>
-
-    </v-list>
-  </v-navigation-drawer>
-
-  <v-container>
-    <h1>Main Content</h1>
-    <component :is="selectedMenuItem"></component>
-  </v-container>
 
 </template>
 
@@ -33,8 +23,7 @@ import { supabase } from "@/plugins/supabase";
 export default {
 
   data: () => ({
-    drawer: true,
-    rail: true,
+    value: 0,
     selectedMenuItem: "magazine",
     menuItems: [
       { title: "Magazzini", value: "magazine", icon: "mdi mdi-magazine-rifle" },
@@ -46,7 +35,15 @@ export default {
     Magazine,
     Task,
   },
-
+  computed: {
+    color() {
+      switch (this.value) {
+        case 0: return 'blue-grey'
+        case 1: return 'teal'
+        default: return 'blue-grey'
+      }
+    },
+  },
   methods: {
     selectMenuItem(value) {
       this.selectedMenuItem = value;
@@ -72,4 +69,5 @@ export default {
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 20px;
 }
+
 </style>
