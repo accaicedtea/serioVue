@@ -14,7 +14,18 @@
 </template>
 
 <script>
-import {supabase} from '../plugins/supabase';
+/**
+ * @data
+ * email: string - The email entered by the user.
+ * password: string - The password entered by the user.
+ *
+ * @methods
+ * register: async function - Registers a new user by connecting to the Supabase server and authenticating the user with the provided email and password. If successful, it logs the user object and performs any necessary actions or redirects to another page. If an error occurs, it logs the error object.
+ *
+ * @dependencies
+ * supabase: object - The Supabase plugin used for authentication.
+ */
+import { supabase } from '../plugins/supabase';
 export default {
     data() {
         return {

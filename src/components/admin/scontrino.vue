@@ -11,7 +11,7 @@
                                 <li class="flex-item" data-label="name">{{ items.name }}</li>
                                 <li class="flex-item" data-label="price">{{ items.price }}</li>
                                 <li class="flex-item" data-label="quantita">{{ items.quantita }}</li>
-                                <li class="flex-item" data-label="richiedi">{{  items.richiedi }}</li>
+                                <li class="flex-item" data-label="richiedi">{{ items.richiedi }}</li>
                             </ul>
                         </td>
                     </tr>
@@ -20,8 +20,35 @@
         </v-layout>
         <v-btn @click="generateReceipt" color="blue">Genera Scontrino</v-btn>
     </v-container>
+
 </template>
+
 <script>
+/**
+ * @data
+ * - dialog: Boolean - Represents the visibility of a dialog.
+ * - isMobile: Boolean - Indicates whether the current device is a mobile device or not.
+ * - headers: Array - An array of objects representing the table headers.
+ *   - title: String - The title of the header.
+ *   - align: String - The alignment of the header.
+ *   - key: String - The key used to access the corresponding data in the items array.
+ *   - sortable: Boolean - Indicates whether the header is sortable or not.
+ * - items: Array - An array of objects representing the table rows.
+ *
+ * @dependencies
+ * - supabase: Object - The supabase object imported from '@/plugins/supabase'.
+ * - jsPDF: Object - The jsPDF object imported from 'jspdf'.
+ *
+ * @methods
+ * - onResize: A method that is called when the window is resized. It updates the isMobile property based on the window width.
+ * - fetchData: A method that fetches data from the 'scontrinoo' table using the supabase object and updates the items array.
+ * - generateReceipt: A method that generates a receipt using the jsPDF library. It creates a PDF document, adds text and tables to it, and saves the file.
+ *
+ * @mounted
+ * - Calls the fetchData method to fetch data when the component is mounted.
+ */
+
+
 import { supabase } from '@/plugins/supabase';
 import { jsPDF } from 'jspdf';
 export default {

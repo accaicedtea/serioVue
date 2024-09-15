@@ -1,8 +1,8 @@
 <template>
-  <v-data-table hide-default-footer :headers="headers" :items="desserts" :sort-by="[{ key: 'name', order: 'asc' }] ">
+  <v-data-table hide-default-footer :headers="headers" :items="desserts" :sort-by="[{ key: 'name', order: 'asc' }]">
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>Task 1</v-toolbar-title>
+        <v-toolbar-title>Task</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
@@ -19,16 +19,16 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col >
+                  <v-col>
                     <v-text-field v-model="editedItem.name" label="Name"></v-text-field>
                   </v-col>
-                  <v-col >
+                  <v-col>
                     <v-text-field v-model="editedItem.category" label="Categoria"></v-text-field>
                   </v-col>
-                    <v-col>
+                  <v-col>
                     <v-checkbox v-model="editedItem.stat" label="fatto?"></v-checkbox>
 
-                    </v-col>
+                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -74,7 +74,37 @@
 </template>
 
 <script>
-import { supabase } from '../../plugins/supabase';
+/**
+ * @name Task
+ * @description A Vue component for managing tasks.
+ * 
+ * @data
+ *  - dialog: Boolean - Flag to control the visibility of the dialog.
+ *  - dialogDelete: Boolean - Flag to control the visibility of the delete dialog.
+ *  - headers: Array - An array of objects representing the table headers.
+ *  - desserts: Array - An array of objects representing the tasks.
+ *  - editedIndex: Number - The index of the currently edited task.
+ *  - editedItem: Object - The currently edited task object.
+ *  - defaultItem: Object - The default task object.
+ * 
+ * @computed
+ *  - formTitle(): String - Returns the title of the form based on the editedIndex.
+ * 
+ * @watch
+ *  - dialog(val: Boolean) - Watcher for the dialog property. Closes the dialog when it becomes false.
+ *  - dialogDelete(val: Boolean) - Watcher for the dialogDelete property. Closes the delete dialog when it becomes false.
+ * 
+ * @methods
+ *  - initialize(): void - Initializes the component by fetching tasks from the server.
+ *  - editItem(item: Object): void - Sets the editedIndex and editedItem properties to the selected task and opens the dialog.
+ *  - deleteItem(item: Object): void - Sets the editedIndex and editedItem properties to the selected task and opens the delete dialog.
+ *  - deleteItemConfirm(): void - Deletes the selected task from the desserts array and closes the delete dialog.
+ *  - close(): void - Closes the dialog and resets the editedItem and editedIndex properties.
+ *  - closeDelete(): void - Closes the delete dialog and resets the editedItem and editedIndex properties.
+ *  - save(): void - Saves the edited task by updating the desserts array and making an API call to create a new task if it's a new item.
+ */
+
+import { supabase } from '@/plugins/supabase';
 
 export default {
   name: 'Task',
@@ -128,11 +158,11 @@ export default {
     initialize() {
       this.desserts;
       supabase
-            .from('task')
-            .select('name, category, stat')
-            .then(response => {
-              this.desserts = response.data;
-            });
+        .from('task')
+        .select('name, category, stat')
+        .then(response => {
+          this.desserts = response.data;
+        });
     },
 
     editItem(item) {
@@ -177,10 +207,10 @@ export default {
           supabase
             .from('task')
             .insert([{
-                name: "ZZZZZZZZZZZZZZZZZZZZZZZZZ",
-                category: 1,
-                stat: false
-              }
+              name: "ZZZZZZZZZZZZZZZZZZZZZZZZZ",
+              category: 1,
+              stat: false
+            }
             ])
             .then(stauts => {
               console.log('New task created');

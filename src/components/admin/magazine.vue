@@ -2,7 +2,7 @@
   <v-data-table :headers="headers" :items="desserts" :sort-by="[{ key: 'name', order: 'asc' }]">
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>Magazzini</v-toolbar-title>
+        <v-toolbar-title>Magazzino</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
@@ -70,7 +70,44 @@
 </template>
 
 <script>
-import { supabase } from '../../plugins/supabase';
+/**
+ * Component for managing magazine items.
+ *
+ * @name Task
+ * @component
+ *
+ * @description
+ * This component allows users to manage magazine items. It provides functionality to add, edit, and delete items from the magazine.
+ *
+ * @data
+ * - `dialog` (Boolean): Flag to control the visibility of the dialog.
+ * - `dialogDelete` (Boolean): Flag to control the visibility of the delete dialog.
+ * - `headers` (Array): An array of objects representing the table headers.
+ * - `desserts` (Array): An array of magazine items.
+ * - `editedIndex` (Number): The index of the currently edited item.
+ * - `editedItem` (Object): The currently edited item.
+ * - `defaultItem` (Object): The default item used for resetting the form.
+ *
+ * @computed
+ * - `formTitle` (String): The title of the form based on the value of `editedIndex`.
+ *
+ * @watch
+ * - `dialog` (Boolean): Watcher for the `dialog` property. Closes the dialog when `dialog` becomes `false`.
+ * - `dialogDelete` (Boolean): Watcher for the `dialogDelete` property. Closes the delete dialog when `dialogDelete` becomes `false`.
+ *
+ * @created
+ * - `initialize` (Method): Initializes the component by fetching magazine items from the database.
+ *
+ * @methods
+ * - `initialize` (Method): Fetches magazine items from the database and assigns them to the `desserts` property.
+ * - `editItem` (Method): Sets the `editedIndex` and `editedItem` properties to the selected item and opens the dialog.
+ * - `deleteItem` (Method): Sets the `editedIndex` and `editedItem` properties to the selected item and opens the delete dialog.
+ * - `deleteItemConfirm` (Method): Deletes the item at `editedIndex` from the `desserts` array and closes the delete dialog.
+ * - `close` (Method): Closes the dialog and resets the `editedItem` and `editedIndex` properties.
+ * - `closeDelete` (Method): Closes the delete dialog and resets the `editedItem` and `editedIndex` properties.
+ * - `save` (Method): Saves the edited item to the database or updates the existing item if `editedIndex` is greater than -1. Closes the dialog after saving.
+ */
+import { supabase } from '@/plugins/supabase';
 
 export default {
   name: 'Task',

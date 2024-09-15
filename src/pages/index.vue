@@ -1,69 +1,66 @@
 <template>
   <v-container>
     <router-link to="/login">
-      <v-btn variant="outlined">Logimn</v-btn>
+      <v-btn variant="outlined">Logidmn</v-btn>
     </router-link>
-    <v-btn @click="savePDF">Save PDF</v-btn>
+    <v-btn @click="createAndPrintFile">Print file</v-btn>
   </v-container>
+  <v-btn v-for="buttonId in buttonIds" :key="buttonId" :id="buttonId" @click="incrementAndSave(buttonId)">{{ buttonId.value
+    }}</v-btn>
 </template>
 
 <script>
-import { Capacitor } from '@capacitor/core';
-import { jsPDF } from 'jspdf';
+import _ from 'lodash';
+
+
 export default {
-  data: () => ({
-    currentTime: '',
-  }),
-  methods: {
-    savePDF() {
-      const doc = new jsPDF();
-      doc.text('Hello world!', 10, 10);
-      doc.save('sample.pdf');
-
-
-      const file = new File([doc.output('blob')], 'sample.pdf', { type: 'application/pdf' });
-      Capacitor.Filesystem.writeFile({
-        path: 'sample.pdf',
-        data: file.pdfBase64,
-        directory: Capacitor.isAndroid ? Capacitor.FilesystemDirectory.External : Capacitor.FilesystemDirectory.Documents,
-        encoding: FilesystemEncoding.UTF8,
-        recursive: true
-      }).then((writeFileResult) => {
-        console.log('File Written');
-        Filesystem.getUri({
-          directory: FilesystemDirectory.Data,
-          path: fileName
-        }).then((getUriResult) => {
-          console.log(getUriResult);
-          const path = getUriResult.uri;
-          this.fileOpener.open(path, 'application/pdf')
-            .then(() => console.log('File is opened'))
-            .catch(error => console.log('Error openening file', error));
-        }, (error) => {
-          console.log(error);
-        });;
-      });
-
-    }
-  },
-
-
-  setup() {
-    const currentTime = ref('');
-
-    const getCurrentTime = () => {
-      const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const time = `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
-      currentTime.value = time;
-      return currentTime.value;
-    };
-
+  data() {
     return {
-      currentTime,
-      getCurrentTime
+      buttonIds: [
+        { id: 'button1', value: 1 },
+        { id: 'button2', value: 2 },
+        { id: 'button3', value: 3 }
+      ],
+      value: 0,
+      interval: null,
     };
-  }
-}
+  },
+  methods: {
+    incrementAndSave(item) {
+      item.value++;
+      // Clear the previous debounce function to prevent multiple updates
+      if (this.debounceFunction) {
+        clearTimeout(this.debounceFunction);
+      }
+
+      // Debounce the increment operation
+      this.debounceFunction = _.debounce(() => {
+        // Update the item quantity in your data source
+
+        console.log('Updated item quantity:', item.id, ': ', item.value);
+        // Send the updated data to Supabase
+        // ...
+
+        // Clear the debounce function after the update
+        this.debounceFunction = null;
+      }, 1000); // Adjust the debounce delay as needed
+
+      this.debounceFunction();
+    },
+    async createAndPrintFile() {
+      /**
+        * Creates a file with the given name and content, and prints the file.
+        * 
+        * @async
+        * @method createAndPrintFile
+        * @returns {Promise<void>} A promise that resolves when the file is created and printed.
+        * 
+        * TODO: Implement the createAndPrintFile method.       
+      */
+
+
+    },
+
+  },
+};
 </script>

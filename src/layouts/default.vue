@@ -16,6 +16,19 @@
 
 
 <script>
+/**
+ * @name DefaultLayout
+ * @description The default layout component for the application.
+ * @data
+ *  - drawer: A boolean indicating whether the drawer is visible or not.
+ *  - rail: A boolean indicating whether the rail is visible or not.
+ *  - auth: A boolean indicating whether the user is authenticated or not. Initialized as false.
+ * @dependencies
+ *  - supabase: The supabase plugin used for authentication.
+ * @methods
+ *  - created: A lifecycle hook that is called when the component is created. It retrieves the user from supabase and sets the auth property based on the user's existence and role.
+ *  - logout: A method that is called when the user clicks on the logout button. It signs out the user and redirects to the login page.
+ */
 import { supabase } from '@/plugins/supabase';
 
 export default {

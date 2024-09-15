@@ -10,35 +10,52 @@
     </v-btn>
   </v-bottom-navigation>
 
-  <component :is="selectedMenuItem"></component>
+  <component :is="selectedMenuItem" ></component>
 
 
 </template>
 
 <script>
-import Magazine from "@/components/user/magazine.vue";
+/**
+ * @data
+ * value: The current value.
+ * selectedMenuItem: The currently selected menu item.
+ * menuItems: An array of menu items with their titles, values, and icons.
+ * 
+ * @dependencies
+ * Magazine: The component for the magazine.
+ * Task: The component for the tasks.
+ * supabase: The Supabase plugin.
+ * 
+ * @methods
+ * selectMenuItem(value): Updates the selectedMenuItem with the given value.
+ * logout(): Logs out the user and performs additional actions if successful.
+ * 
+ * @computed
+ * color(): Returns the color based on the current value.
+ */
+import Magazinee from "@/components/user/magazinee.vue";
 import Task from "@/components/user/tasks.vue";
 import { supabase } from "@/plugins/supabase";
 
 export default {
-
   data: () => ({
     value: 0,
-    selectedMenuItem: "magazine",
+    selectedMenuItem: "magazinee",
     menuItems: [
-      { title: "Magazzini", value: "magazine", icon: "mdi mdi-magazine-rifle" },
+      { title: "Magazzino", value: "magazinee", icon: "mdi mdi-magazine-rifle" },
       { title: "Task", value: "task", icon: "mdi mdi-format-list-checks" },
     ],
   }),
 
   components: {
-    Magazine,
+    Magazinee,
     Task,
   },
   computed: {
     color() {
       switch (this.value) {
-        case 0: return 'blue-grey'
+        case 0: return 'red-darken-1'
         case 1: return 'teal'
         default: return 'blue-grey'
       }
@@ -69,5 +86,4 @@ export default {
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 20px;
 }
-
 </style>

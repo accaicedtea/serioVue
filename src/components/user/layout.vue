@@ -4,7 +4,7 @@
     </v-toolbar>
 
     <div class="d-flex flex-row">
-      <v-tabs v-model="tab"  direction="vertical">
+      <v-tabs v-model="tab" direction="vertical">
         <v-tab v-for="c in cosa" :key="c.id" :text="c.name" :value="c.name"></v-tab>
       </v-tabs>
 
@@ -22,7 +22,21 @@
 </template>
 
 <script>
-import { supabase } from '../../plugins/supabase';
+/**
+ * @data
+ * tab: 0
+ * cosa: an array of objects
+ * categorie: an array of objects
+ * categorieError: null or an error object
+ *
+ * @dependencies
+ * supabase: imported from '../../plugins/supabase'
+ *
+ * @methods
+ * onMounted: a lifecycle hook that runs when the component is mounted
+ * changeState: a method that sends an id to the server and changes the state
+ */
+import { supabase } from '@/plugins/supabase';
 
 export default {
   nome: 'TablePage',
@@ -84,6 +98,3 @@ export default {
   },
 };
 </script>
-
-
-

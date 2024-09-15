@@ -73,7 +73,48 @@
 </template>
 
 <script>
-import { supabase } from '../../plugins/supabase';
+/**
+ * Component for managing products in the admin panel.
+ *
+ * @name Task
+ * @component
+ *
+ * @description
+ * This component allows the user to add, edit, and delete products.
+ *
+ * @data
+ * - `dialog` (Boolean): Flag indicating whether the dialog is open or not.
+ * - `dialogDelete` (Boolean): Flag indicating whether the delete dialog is open or not.
+ * - `headers` (Array): Array of objects representing the table headers.
+ * - `desserts` (Array): Array of objects representing the products.
+ * - `editedIndex` (Number): Index of the currently edited item.
+ * - `editedItem` (Object): Object representing the currently edited item.
+ * - `defaultItem` (Object): Object representing the default item.
+ *
+ * @computed
+ * - `formTitle` (String): Title of the form based on the edited index.
+ *
+ * @watch
+ * - `dialog` (Boolean): Watcher for the dialog flag.
+ * - `dialogDelete` (Boolean): Watcher for the delete dialog flag.
+ *
+ * @created
+ * - `initialize` (Function): Initializes the component by fetching the products from the server.
+ *
+ * @methods
+ * - `initialize` (Function): Fetches the products from the server and assigns them to the desserts array.
+ * - `editItem` (Function): Sets the edited index and item and opens the dialog for editing.
+ * - `deleteItem` (Function): Sets the edited index and item and opens the delete dialog.
+ * - `deleteItemConfirm` (Function): Deletes the item from the desserts array and closes the delete dialog.
+ * - `close` (Function): Closes the dialog and resets the edited item and index.
+ * - `closeDelete` (Function): Closes the delete dialog and resets the edited item and index.
+ * - `save` (Function): Saves the edited item by updating the desserts array or adding a new item.
+ *
+ * @style
+ * - Your component's CSS styles go here.
+ */
+
+import { supabase } from '@/plugins/supabase';
 
 export default {
   name: 'Task',

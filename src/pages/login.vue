@@ -21,7 +21,19 @@
 
 
 <script>
-import {supabase} from '../plugins/supabase';
+/**
+ * @data
+ * email: string - The email entered by the user.
+ * password: string - The password entered by the user.
+ *
+ * @methods
+ * login: async function - Authenticates the user with Supabase server using the provided email and password. If successful, redirects the user to the '/tasks' page. Otherwise, handles the login error.
+ * logout: async function - Signs out the user from Supabase server. If successful, logs a message indicating successful logout. Otherwise, handles the logout error.
+ *
+ * @dependencies
+ * supabase: object - The Supabase plugin used for authentication.
+ */
+import { supabase } from '../plugins/supabase';
 
 export default {
     data() {
@@ -33,33 +45,33 @@ export default {
     methods: {
         async login() {
             try {
-          // Connect to Supabase server and authenticate user
-          const { user, error } = await supabase.auth.signInWithPassword({
-              email: this.email,
-              password: this.password
-          })
+                // Connect to Supabase server and authenticate user
+                const { user, error } = await supabase.auth.signInWithPassword({
+                    email: this.email,
+                    password: this.password
+                })
 
-          if (error) {
-              console.error(error)
-              // Handle login error
-          } else {
-              // User logged in successfully
-              this.$router.push('/tasks');
-          }
+                if (error) {
+                    console.error(error)
+                    // Handle login error
+                } else {
+                    // User logged in successfully
+                    this.$router.push('/tasks');
+                }
             } catch (error) {
-          console.error(error)
-          // Handle login error
+                console.error(error)
+                // Handle login error
             }
         },
         async logout() {
-          const { data, error } = await supabase.auth.signOut();
-          if (error) {
-            console.error(error);
-            // Handle logout error
-          } else {
-            console.log("Logout successful");
-            // Perform any additional actions after logout
-          }
+            const { data, error } = await supabase.auth.signOut();
+            if (error) {
+                console.error(error);
+                // Handle logout error
+            } else {
+                console.log("Logout successful");
+                // Perform any additional actions after logout
+            }
         }
     }
 }

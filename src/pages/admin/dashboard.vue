@@ -1,6 +1,6 @@
 <template>
   <v-bottom-navigation v-model="value" :bg-color="color" grow>
-    <v-btn v-for="item in menuItems" :key="item.value" @click="selectMenuItem(item.value)" >
+    <v-btn v-for="item in menuItems" :key="item.value" @click="selectMenuItem(item.value)">
       <v-icon>{{ item.icon }}</v-icon>
       <span>{{ item.title }}</span>
     </v-btn>
@@ -14,6 +14,27 @@
 </template>
 
 <script>
+/**
+ * @data
+ * value: The current value.
+ * selectedMenuItem: The selected menu item.
+ * menuItems: The list of menu items.
+ *   - title: The title of the menu item.
+ *   - value: The value of the menu item.
+ *   - icon: The icon of the menu item.
+ *
+ * @dependencies
+ * Magazine: The component for the magazine.
+ * Product: The component for the product.
+ * Task: The component for the task.
+ * Scontrino: The component for the scontrino.
+ * supabase: The Supabase plugin.
+ *
+ * @methods
+ * selectMenuItem: Sets the selected menu item.
+ *   - value: The value of the menu item to be selected.
+ * logout: Logs out the user.
+ */
 import Magazine from "@/components/admin/magazine.vue";
 import Product from "@/components/admin/product.vue";
 import Task from "@/components/admin/task.vue";
@@ -22,8 +43,8 @@ import { supabase } from "@/plugins/supabase";
 
 export default {
   data: () => ({
-    value: 3,
-    selectedMenuItem: "task",
+    value: 0,
+    selectedMenuItem: "scontrino",
     menuItems: [
       { title: "Scontrino", value: "scontrino", icon: "mdi mdi-receipt" },
       { title: "Task", value: "task", icon: "mdi-calendar-check-outline" },
