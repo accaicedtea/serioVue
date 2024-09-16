@@ -13,12 +13,13 @@
         </v-chip>
       </template>
       <template v-slot:item.actions="{ item }">
-        <v-btn rounded="lg" elevation="4" @click="incrementAndSave(item)" text color="green-lighten-1" class="me-2">
+        <v-btn rounded="lg" elevation="4" @click="incrementAndSave(item, 'inc')" text color="green-lighten-1"
+          class="me-2">
           <v-icon>
             mdi-plus
           </v-icon>
         </v-btn>
-        <v-btn @click="incrementAndSave(item)" text color="red-accent-4">
+        <v-btn @click="incrementAndSave(item, 'dec')" text color="red-accent-4">
           <v-icon>
             mdi-minus
           </v-icon>
@@ -60,7 +61,7 @@ export default {
         {
           title: 'Magazzino',
           align: 'start',
-          key: 'storer',
+          key: 'magazine',
           sortable: true
         },
         { title: 'Prodotto', key: 'product', sortable: true },
@@ -78,23 +79,18 @@ export default {
     initialize() {
       this.boats;
       console.log("query");
-      supabase.from('inventary').select('*').then(response => {
+      supabase.from('see_magazine').select('*').then(response => {
         this.boats = response.data;
       });
     },
-    incrementQuantity(item) {
-      item.quantity++;
-      // TODO: Update the database
-
-    },
-    decrementQuantity(item) {
-      if (item.quantity > 0) {
-        item.quantity--;
-        // TODO: Update the database
+    incrementAndSave(item, op) {
+      if (op == 'inc') {
+        item.quantity++;
+      } else {
+        if (item.quantity > 0) {
+          item.quantity--;
+        }
       }
-    },
-    async incrementAndSave(item) {
-      item.quantity++;
       // Clear the previous debounce function to prevent multiple updates
       if (this.debounceFunction) {
         clearTimeout(this.debounceFunction);
@@ -104,10 +100,10 @@ export default {
       this.debounceFunction = _.debounce(async () => {
         // Update the item quantity in your data source
         await supabase
-          .rpc('aggiorna_quantita_e_log', {
-            id_prodotto: item.product,
-            id_storer: item.storer,
-            op: true,
+          .rpc('tete', {
+            name_mag: item.magazine,
+            name_product: item.product,
+            op: 1,
             quantita: item.quantity
           })
         console.log('Updated item quantity:', item.storer, ': ', item.product, ': ', item.quantity);

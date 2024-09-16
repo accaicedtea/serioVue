@@ -1,26 +1,19 @@
 <template>
     <v-container>
         <v-layout v-resize="onResize" column style="padding-top:56px">
-            <v-data-table-virtual :headers="headers" :items="items" height="400" item-value="id"
-                :class="{ mobile: isMobile }">
-                <template slot="items" slot-scope="props">
-                    <tr v-if="isMobile">
-                        <td>
-                            <ul class="flex-content">
-                                <li class="flex-item" data-label="id">{{ items.id }}</li>
-                                <li class="flex-item" data-label="name">{{ items.name }}</li>
-                                <li class="flex-item" data-label="price">{{ items.price }}</li>
-                                <li class="flex-item" data-label="quantita">{{ items.quantita }}</li>
-                                <li class="flex-item" data-label="richiedi">{{ items.richiedi }}</li>
-                            </ul>
-                        </td>
-                    </tr>
+            <v-data-table-virtual :headers="headers" :items="items" height="400" item-value="id">
+                <template v-slot:item.actions="{ item }">
+                    <v-btn icon small @click="decrementQuantity(item)" color="red">
+                        <v-icon color="white">mdi-minus</v-icon>
+                    </v-btn>
+                    <v-btn icon small @click="incrementQuantity(item)" color="green">
+                        <v-icon color="white">mdi-plus</v-icon>
+                    </v-btn>
                 </template>
             </v-data-table-virtual>
         </v-layout>
         <v-btn @click="generateReceipt" color="blue">Genera Scontrino</v-btn>
     </v-container>
-
 </template>
 
 <script>
@@ -48,9 +41,9 @@
  * - Calls the fetchData method to fetch data when the component is mounted.
  */
 
-
 import { supabase } from '@/plugins/supabase';
 import { jsPDF } from 'jspdf';
+
 export default {
     data() {
         return {
@@ -66,6 +59,7 @@ export default {
                 { title: 'Prezzo', key: 'price', sortable: true },
                 { title: 'qt. Massima', key: 'quantita', sortable: true },
                 { title: 'qt. da ordinare', key: 'richiedi', sortable: false },
+                { title: 'Azioni', key: 'actions', sortable: false },
             ],
             items: [],
         };
@@ -91,18 +85,26 @@ export default {
                 console.error('Errore nel recupero dei dati:', error);
             }
         },
+        incrementQuantity(item) {
+            item.richiedi++;
+        },
+        decrementQuantity(item) {
+            if (item.richiedi > 0) {
+                item.richiedi--;
+            }
+        },
         async generateReceipt() {
             const doc = new jsPDF();
             doc.setFontSize(10);
             doc.text('Scontrino', 10, 10);
-            doc.text('Destinatario: [Inserisci il nome del destinatario]', 10, 20);
-            doc.text('Numero ordine: [Inserisci il numero dell\'ordine]', 10, 30);
+            doc.text('Numero ordine: [Inserisci il numero dell\'ordine]', 10, 20);
+            doc.text('Destinatario: [Inserisci il nome del destinatario]', 10, 30);
             doc.text('Contatti impresa: [Inserisci i contatti dell\'impresa]', 10, 40);
-            let y = 50;
+            let y = 70;
 
             // Table headers
-            const headers = ['Nome', 'Prezzo/Unità', 'Totale'];
-            const columnWidths = [60, 40, 40];
+            const headers = ['Nome', 'Prezzo/Unità', 'Quantità', 'Totale'];
+            const columnWidths = [40, 40, 40, 40];
 
             // Draw table header
             headers.forEach((header, index) => {
@@ -116,8 +118,9 @@ export default {
                 const total = item.richiedi * item.price;
                 grandTotal += total;
                 doc.text(item.name, 10, y);
-                doc.text(item.price.toString(), 10 + columnWidths[0], y);
-                doc.text(total.toString(), 10 + columnWidths[0] + columnWidths[1], y);
+                doc.text(item.price.toString() + " €", 10 + columnWidths[0], y);
+                doc.text(item.richiedi.toString(), 10 + columnWidths[0] + columnWidths[1], y);
+                doc.text(total.toFixed(2) + " €", 10 + columnWidths[0] + columnWidths[1] + columnWidths[2], y);
                 y += 10;
             });
 
@@ -144,66 +147,4 @@ export default {
 };
 </script>
 
-<style>
-.mobile {
-    color: #333;
-}
-
-@media screen and (max-width: 768px) {
-    .mobile table.v-table tr {
-        max-width: 100%;
-        position: relative;
-        display: block;
-    }
-
-    .mobile table.v-table tr:nth-child(odd) {
-        border-left: 6px solid deeppink;
-    }
-
-    .mobile table.v-table tr:nth-child(even) {
-        border-left: 6px solid cyan;
-    }
-
-    .mobile table.v-table tr td {
-        display: flex;
-        width: 100%;
-        border-bottom: 1px solid #f5f5f5;
-        height: auto;
-        padding: 10px;
-    }
-
-    .mobile table.v-table tr td ul li:before {
-        content: attr(data-label);
-        padding-right: 0.5em;
-        text-align: left;
-        display: block;
-        color: #999;
-    }
-
-    .v-datatable__actions__select {
-        width: 50%;
-        margin: 0px;
-        justify-content: flex-start;
-    }
-
-    .mobile .theme--light.v-table tbody tr:hover:not(.v-datatable__expand-row) {
-        background: transparent;
-    }
-}
-
-.flex-content {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-}
-
-.flex-item {
-    padding: 5px;
-    width: 50%;
-    height: 40px;
-    font-weight: bold;
-}
-</style>
+<style scoped></style>

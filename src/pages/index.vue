@@ -11,7 +11,7 @@
 
 <script>
 import _ from 'lodash';
-
+// TODO: change the home page to a dashboard page 
 
 export default {
   data() {
