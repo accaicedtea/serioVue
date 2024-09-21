@@ -6,15 +6,22 @@
                     <v-card-title class="text-center">Login</v-card-title>
                     <v-card-text>
                         <v-form @submit.prevent="login">
-                            <v-text-field v-model="email" label="Email" required></v-text-field>
-                            <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
+                            <v-text-field v-model="email" label="Email" :rules="emailRules" required></v-text-field>
+                            <v-text-field v-model="password" label="Password" type="password" 
+                                required></v-text-field>
                             <v-btn type="submit" color="primary">Login</v-btn>
                         </v-form>
                     </v-card-text>
                 </v-card>
             </v-col>
         </v-row>
-        <v-btn @click="logout">logout</v-btn>
+        <!-- 
+
+            This code snippet represents a Vue component template that includes a Vuetify button (v-btn).
+            <v-btn @click="logout">logout</v-btn>
+            The button has a click event listener attached to it, which triggers the 'logout' method when clicked.
+        -->
+
     </v-container>
 
 </template>
@@ -34,12 +41,36 @@
  * supabase: object - The Supabase plugin used for authentication.
  */
 import { supabase } from '../plugins/supabase';
+import { Preferences } from '@capacitor/preferences';
 
 export default {
     data() {
         return {
             email: '',
-            password: ''
+            password: '',
+            emailRules: [
+                value => {
+                    if (value) return true
+
+                    return 'E-mail is requred.'
+                },
+                value => {
+                    if (/.+@.+\..+/.test(value)) return true
+
+                    return 'E-mail must be valid.'
+                },
+            ],
+            passwordRules: [
+                value => {
+                    if (value) return true
+                    return 'Password is required.'
+                },
+                value => {
+                    if (/^(?=.*[A-Z])(?=.*\W).{8,}$/.test(value)) return true
+
+                    return 'Password must be valid.'
+                }
+            ]
         }
     },
     methods: {
@@ -56,7 +87,33 @@ export default {
                     // Handle login error
                 } else {
                     // User logged in successfully
-                    this.$router.push('/tasks');
+                    console.log("Login successful");
+
+                    // Save user data and session
+                    
+                    
+
+                    const { data: { user } } = await supabase.auth.getUser()
+
+
+                    const userData = JSON.stringify(user);
+                    await Preferences.set({ key: 'user', value: userData });
+                    
+                    await Preferences.set({ key: 'currentPage', value: '/login' });
+
+                    // Retrieve and print user data, session, and current page
+                    
+                    const userRet = await Preferences.get({ key: 'user' });
+                    const currentPageRet = await Preferences.get({ key: 'currentPage' });
+
+                    const savedUser = JSON.parse(userRet.value);
+                    const savedCurrentPage = currentPageRet.value;
+
+                    console.log('User:', savedUser);
+                    console.log('Current page:', savedCurrentPage);
+
+                    // Redirect to tasks page
+                    //this.$router.push('/tasks');
                 }
             } catch (error) {
                 console.error(error)

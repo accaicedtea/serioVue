@@ -43,6 +43,8 @@
 
 import { supabase } from '@/plugins/supabase';
 import { jsPDF } from 'jspdf';
+import { Capacitor } from '@capacitor/core';
+import {Filesystem,Directory,Encoding} from '@capacitor/filesystem';
 
 export default {
     data() {
@@ -118,23 +120,31 @@ export default {
                 const total = item.richiedi * item.price;
                 grandTotal += total;
                 doc.text(item.name, 10, y);
-                doc.text(item.price.toString() + " €", 10 + columnWidths[0], y);
+                doc.text(item.price.toString() + "U+0020€", 10 + columnWidths[0], y);
                 doc.text(item.richiedi.toString(), 10 + columnWidths[0] + columnWidths[1], y);
-                doc.text(total.toFixed(2) + " €", 10 + columnWidths[0] + columnWidths[1] + columnWidths[2], y);
+                doc.text(total.toFixed(2) + "U+0020€", 10 + columnWidths[0] + columnWidths[1] + columnWidths[2], y);
                 y += 10;
             });
 
             // Draw grand total
-            doc.text(`Totale: ${grandTotal.toFixed(2)} €`, 130, y);
+            doc.text(`Totale: ${grandTotal.toFixed(2)}U+0020€`, 130, y);
             const date = new Date();
             const fileName = `ordine-${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}-ordine.pdf`;
 
             // Save the file
-            if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
-                // For Android and iOS devices, use the FileSaver.js library to save the file
-                const blob = doc.output('blob');
-                const fileSaver = require('file-saver');
-                fileSaver.saveAs(blob, fileName);
+            if (Capacitor.isNativePlatform()) {
+                // For Android and iOS devices, use the Capacitor Filesystem plugin to save the file
+                const pdfData =  // the data of the pdf
+                Filesystem.writeFile({
+                    path: "test.pdf",
+                    data: doc.output(),
+                    directory: Directory.Documents,
+                    encoding: Encoding.UTF8,
+                }).then(() => {
+                    console.log('File saved successfully');
+                }).catch((error) => {
+                    console.error('Error saving file:', error);
+                });
             } else {
                 // For other devices, use the built-in save function of jsPDF
                 doc.save(fileName);

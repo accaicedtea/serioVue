@@ -4,7 +4,7 @@
 
   <v-divider></v-divider>
 
-  <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats" :custom-filter="customFilter"
+  <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats" 
     :search="search" height="400" item-value="name" class="text-h5">
     <template v-slot:item.stat="{ item }">
       <v-checkbox v-model="item.stat" hide-details @click="update_task(item)"></v-checkbox>
@@ -78,7 +78,7 @@ export default {
       // Handle error here
       }
     },
-    // SERVE VERAMENTE?
+    // SERVE VERAMENTE? NO ANZI
     customFilter(value, query, item) {
       return value != null &&
         query != null &&

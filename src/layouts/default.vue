@@ -1,17 +1,21 @@
 <template>
 
   <v-app-bar>
-    <v-toolbar-title>{{ auth ? 'Admin' : 'myapp' }}</v-toolbar-title>
+    <v-toolbar-title>{{ auth ? 'Admin' : 'myapp' }} {{ varr }}</v-toolbar-title>
+
     <v-spacer></v-spacer>
     <v-btn v-if="!auth" to="/">Home</v-btn>
     <v-btn v-if="auth" @click="logout">logout</v-btn>
     <v-btn v-else to="/login">Login</v-btn>
   </v-app-bar>
 
+  <v-main class="d-flex align-center justify-center" >
+    <router-view />
+  </v-main>
 
-  <router-view />
-
-
+  <v-footer app>
+    <span>&copy; 2021</span>
+  </v-footer>
 </template>
 
 
@@ -30,6 +34,7 @@
  *  - logout: A method that is called when the user clicks on the logout button. It signs out the user and redirects to the login page.
  */
 import { supabase } from '@/plugins/supabase';
+import { Preferences } from '@capacitor/preferences';
 
 export default {
   name: 'DefaultLayout',
@@ -40,6 +45,7 @@ export default {
       drawer: true,
       rail: true,
       auth: false, // Initialize auth as false
+      varr: '',
     };
   },
   async created() {
@@ -48,7 +54,9 @@ export default {
     if (user == null) {
       this.auth = false; // Set auth to false if user does not exist
     } else if (user.role == "authenticated") {
+
       this.auth = true; // Set auth to true if user exists
+      this.varr = 'Admin';
     }
   },
   methods: {

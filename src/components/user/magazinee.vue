@@ -5,7 +5,7 @@
 
   <v-divider></v-divider>
   <v-container>
-    <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats" :custom-filter="customFilter"
+    <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats"
       :search="search" height="600" item-value="prodotto" class="text-h5">
       <template v-slot:item.quantity="{ value }">
         <v-chip variant="elevated" size="x-large" :color="getColor(value)" class="text-center">
@@ -117,7 +117,7 @@ export default {
       else if (quantity >= 1 && quantity <= 9) return 'orange-lighten-1'
       else return 'red-darken-3'
     },
-    // SERVE VERAMENTO?
+    // SERVE VERAMENTO? NO ANZI
     customFilter(value, query, item) {
       return value != null &&
         query != null &&
