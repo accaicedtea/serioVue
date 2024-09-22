@@ -1,16 +1,13 @@
 <template>
   <v-app-bar>
-    <v-toolbar-title>{{ auth ? 'Admin' : 'myapp' }} {{ varr }}</v-toolbar-title>
-
+<v-toolbar-title>{{ currentDateTime }}</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-btn :to="auth ? '/admin/dashboard' : '/'">Home</v-btn>
     <v-btn v-if="auth" @click="logout" color="red" variant="tonal">Logout</v-btn>
     <v-btn v-else to="/login" >Login</v-btn>
   </v-app-bar>
 
-  
-    <router-view />
-
+  <router-view />
 </template>
 
 <script>
@@ -27,10 +24,13 @@ export default {
       rail: true,
       auth: false, // Initialize auth as false
       varr: '',
+      currentDateTime: '',
     };
   },
   async created() {
     await this.checkUser();
+    this.updateDateTime();
+    setInterval(this.updateDateTime, 1000); // Update every second
   },
   watch: {
     auth(newVal) {
@@ -73,6 +73,15 @@ export default {
         console.error(error);
       }
     },
+    updateDateTime() {
+      const now = new Date();
+      const days = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+      const months = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+      const dayName = days[now.getDay()];
+      const monthName = months[now.getMonth()];
+      const timeString = now.toLocaleTimeString();
+      this.currentDateTime = `${dayName}, ${now.getDate()} ${monthName} ${now.getFullYear()} ${timeString}`;
+    }
   }
 }
 </script>

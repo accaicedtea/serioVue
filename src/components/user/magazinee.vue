@@ -1,12 +1,13 @@
 <template>
+
   <v-text-field v-model="search" density="compact" label="Cerca prodotto" prepend-inner-icon="mdi-magnify"
     variant="solo-filled" flat hide-details single-line class="mb-2"
     :class="{ 'deep-purple-lighten-2': true }"></v-text-field>
 
   <v-divider></v-divider>
   <v-container>
-    <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats"
-      :search="search"  item-value="prodotto" class="text-h5">
+    <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats" :search="search"
+      item-value="prodotto" class="text-h5">
       <template v-slot:item.quantity="{ value }">
         <v-chip variant="elevated" size="x-large" :color="getColor(value)" class="text-center">
           {{ value }}
@@ -87,7 +88,7 @@ export default {
       Preferences.set({ key: 'currentPage', value: '/user/magazinee' });
     },
     incrementAndSave(item, op) {
-      
+
       if (op == 'inc') {
         item.quantity++;
         Haptics.impact({ style: ImpactStyle.Light });
@@ -95,7 +96,7 @@ export default {
         if (item.quantity > 0) {
           item.quantity--;
           Haptics.impact({ style: ImpactStyle.Light });
-        }else{
+        } else {
           Haptics.impact({ style: ImpactStyle.Heavy });
         }
       }

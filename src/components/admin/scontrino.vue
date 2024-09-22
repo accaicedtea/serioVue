@@ -14,6 +14,8 @@
         </v-layout>
         <v-btn @click="generateReceipt" color="blue">Genera Scontrino</v-btn>
     </v-container>
+
+    
 </template>
 
 <script>
@@ -120,24 +122,27 @@ export default {
             // Draw table rows and calculate total
             let grandTotal = 0;
             this.items.forEach(item => {
-                const total = item.richiedi * item.price;
-                grandTotal += total;
-                doc.text(item.name, 10, y);
-                doc.text(item.price.toString() + "U+0020€", 10 + columnWidths[0], y);
-                doc.text(item.richiedi.toString(), 10 + columnWidths[0] + columnWidths[1], y);
-                doc.text(total.toFixed(2) + "U+0020€", 10 + columnWidths[0] + columnWidths[1] + columnWidths[2], y);
-                y += 10;
+                if (item.richiedi > 0) {
+                    const total = item.richiedi * item.price;
+                    grandTotal += total;
+                    doc.text(item.name, 10, y);
+                    doc.text(item.price.toString() + "€", 10 + columnWidths[0], y);
+                    doc.text(item.richiedi.toString(), 10 + columnWidths[0] + columnWidths[1], y);
+                    doc.text(total.toFixed(2) + "€", 10 + columnWidths[0] + columnWidths[1] + columnWidths[2], y);
+                    y += 10;
+                }
             });
-
+            // Draw a line
+            doc.line(10, y, 200, y);
+            y += 10;
             // Draw grand total
-            doc.text(`Totale: ${grandTotal.toFixed(2)}U+0020€`, 130, y);
+            doc.text(`Totale: ${grandTotal.toFixed(2)}€`, 118, y);
             const date = new Date();
             const fileName = `ordine-${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}-ordine.pdf`;
 
             // Save the file
             if (Capacitor.isNativePlatform()) {
                 // For Android and iOS devices, use the Capacitor Filesystem plugin to save the file
-                const pdfData =  // the data of the pdf
                 Filesystem.writeFile({
                     path: "test.pdf",
                     data: doc.output(),
