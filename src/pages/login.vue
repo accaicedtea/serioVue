@@ -7,8 +7,7 @@
                     <v-card-text>
                         <v-form @submit.prevent="login">
                             <v-text-field v-model="email" label="Email" :rules="emailRules" required></v-text-field>
-                            <v-text-field v-model="password" label="Password" type="password" 
-                                required></v-text-field>
+                            <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
                             <v-btn type="submit" color="primary">Login</v-btn>
                         </v-form>
                     </v-card-text>
@@ -90,27 +89,25 @@ export default {
                     console.log("Login successful");
 
                     // Save user data and session
-                    
-                    
-
-                    const { data: { user } } = await supabase.auth.getUser()
-
-
+                    const { data: { user } } = await supabase.auth.getUser();
                     const userData = JSON.stringify(user);
+
                     await Preferences.set({ key: 'user', value: userData });
-                    
                     await Preferences.set({ key: 'currentPage', value: '/login' });
 
                     // Retrieve and print user data, session, and current page
-                    
                     const userRet = await Preferences.get({ key: 'user' });
                     const currentPageRet = await Preferences.get({ key: 'currentPage' });
 
                     const savedUser = JSON.parse(userRet.value);
                     const savedCurrentPage = currentPageRet.value;
-
-                    console.log('User:', savedUser);
-                    console.log('Current page:', savedCurrentPage);
+                    // reload the page
+                    location.reload();
+                    
+                    //console.log('User:', savedUser);
+                    // console.log('User:', savedUser.id);
+                    // console.log('Role:', role);
+                    // console.log('Current page:', savedCurrentPage);
 
                     // Redirect to tasks page
                     //this.$router.push('/tasks');
@@ -121,13 +118,20 @@ export default {
             }
         },
         async logout() {
-            const { data, error } = await supabase.auth.signOut();
-            if (error) {
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) {
+                    console.error(error);
+                    // Handle logout error
+                } else {
+                    console.log("Logout successful");
+                    // Clear preferences
+                    await Preferences.clear();
+                    // Perform any additional actions after logout
+                }
+            } catch (error) {
                 console.error(error);
                 // Handle logout error
-            } else {
-                console.log("Logout successful");
-                // Perform any additional actions after logout
             }
         }
     }

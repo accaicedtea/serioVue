@@ -1,4 +1,4 @@
-<template>
+<template >
   <v-data-table :headers="headers" :items="desserts" :sort-by="[{ key: 'name', order: 'asc' }]">
     <template v-slot:top>
       <v-toolbar flat>
@@ -108,12 +108,14 @@
  * - `save` (Method): Saves the edited item to the database or updates the existing item if `editedIndex` is greater than -1. Closes the dialog after saving.
  */
 import { supabase } from '@/plugins/supabase';
-
+import { Preferences } from '@capacitor/preferences';
 export default {
-  name: 'Task',
+  name: 'Magazine',
+  
   data: () => ({
     dialog: false,
     dialogDelete: false,
+    
     headers: [
       {
         title: 'Name',
@@ -152,6 +154,7 @@ export default {
 
   created() {
     this.initialize()
+    
   },
 
   methods: {
@@ -161,6 +164,7 @@ export default {
       supabase.from('magazine').select('name, mq').then(response => {
         this.desserts = response.data;
       });
+      Preferences.set({ key: 'selectedAdmin', value: 'magazine' });
     },
 
     editItem(item) {

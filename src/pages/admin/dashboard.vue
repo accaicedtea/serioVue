@@ -40,7 +40,7 @@ import Product from "@/components/admin/product.vue";
 import Task from "@/components/admin/task.vue";
 import Scontrino from "@/components/admin/scontrino.vue";
 import { supabase } from "@/plugins/supabase";
-
+import { Preferences } from '@capacitor/preferences';
 export default {
   data: () => ({
     value: 0,
@@ -69,6 +69,17 @@ export default {
         default: return 'blue-grey'
       }
     },
+  },
+  async created() {
+    try {
+      const { value } = await Preferences.get({ key: 'selectedAdmin' });
+      console.log('selectedAdmin:', value);
+      if (value) {
+        this.selectedMenuItem = value;
+      }
+    } catch (error) {
+      console.error('Error fetching selectedAdmin from preferences:', error);
+    }
   },
   methods: {
     selectMenuItem(value) {

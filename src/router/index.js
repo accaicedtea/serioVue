@@ -19,14 +19,35 @@ const router = createRouter({
 // Middleware per il controllo di autenticazione
 const authGuard = async (to, from, next) => {
   const { data: { user } } = await supabase.auth.getUser();
-  if (user != null && (to.path.startsWith('/admin') || to.path.startsWith('/user'))) {
-    const roles = user.role;
-    if (roles.includes('authenticated')) {
-      console.log('Utente autorizzato');
-      next();
+  if (user != null) {
+    if (to.path === '/login' || to.path === '/') {
+      const { data: { role } } = await supabase
+        .from('teams')
+        .select('role')
+        .eq('teams', user.id)
+        .single();
+      
+      if (role === 'admin') {
+        console.log('Utente admin già loggato, reindirizzamento alla dashboard admin');
+        next('/admin/dashboard');
+      } else if (role === 'user') {
+        console.log('Utente user già loggato, reindirizzamento alla dashboard user');
+        next('/user/dashboard');
+      } else {
+        console.log('Ruolo non riconosciuto, reindirizzamento alla home');
+        next('/');
+      }
+    } else if (to.path.startsWith('/admin') || to.path.startsWith('/user')) {
+      const roles = user.role;
+      if (roles.includes('authenticated')) {
+        console.log('Utente autorizzato');
+        next();
+      } else {
+        console.log('Utente non autorizzato');
+        next('/login');
+      }
     } else {
-      console.log('Utente non autorizzato');
-      next('/login');
+      next();
     }
   } else if (user == null && (to.path.startsWith('/admin') || to.path.startsWith('/user'))) {
     console.log('Utente non autorizzato');

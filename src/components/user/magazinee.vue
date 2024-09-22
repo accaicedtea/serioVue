@@ -6,7 +6,7 @@
   <v-divider></v-divider>
   <v-container>
     <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats"
-      :search="search" height="600" item-value="prodotto" class="text-h5">
+      :search="search"  item-value="prodotto" class="text-h5">
       <template v-slot:item.quantity="{ value }">
         <v-chip variant="elevated" size="x-large" :color="getColor(value)" class="text-center">
           {{ value }}
@@ -53,6 +53,8 @@
  */
 import { supabase } from '@/plugins/supabase';
 import _ from 'lodash';
+import { Preferences } from '@capacitor/preferences';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 export default {
   data() {
     return {
@@ -82,13 +84,19 @@ export default {
       supabase.from('see_magazine').select('*').then(response => {
         this.boats = response.data;
       });
+      Preferences.set({ key: 'currentPage', value: '/user/magazinee' });
     },
     incrementAndSave(item, op) {
+      
       if (op == 'inc') {
         item.quantity++;
+        Haptics.impact({ style: ImpactStyle.Light });
       } else {
         if (item.quantity > 0) {
           item.quantity--;
+          Haptics.impact({ style: ImpactStyle.Light });
+        }else{
+          Haptics.impact({ style: ImpactStyle.Heavy });
         }
       }
       // Clear the previous debounce function to prevent multiple updates

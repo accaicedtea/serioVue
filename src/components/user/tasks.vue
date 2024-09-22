@@ -1,11 +1,11 @@
 <template>
-  <v-text-field v-model="search" density="compact" label="Cerca attività" prepend-inner-icon="mdi-magnify" variant="solo-filled"
-    flat hide-details single-line class="mb-2"></v-text-field>
+  <v-text-field v-model="search" density="compact" label="Cerca attività" prepend-inner-icon="mdi-magnify"
+    variant="solo-filled" flat hide-details single-line class="mb-2"></v-text-field>
 
   <v-divider></v-divider>
 
-  <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats" 
-    :search="search" height="400" item-value="name" class="text-h5">
+  <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats" :search="search" item-value="name"
+    class="text-h5">
     <template v-slot:item.stat="{ item }">
       <v-checkbox v-model="item.stat" hide-details @click="update_task(item)"></v-checkbox>
     </template>
@@ -32,6 +32,8 @@
  * loadItems: Function - Loads items from a fake API.
  */
 import { supabase } from '@/plugins/supabase'
+import { Preferences } from '@capacitor/preferences';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 export default {
   data() {
     return {
@@ -60,42 +62,27 @@ export default {
       supabase.from('task').select('name,category,stat').then(response => {
         this.boats = response.data;
       });
+      Preferences.set({ key: 'currentPage', value: '/user/tasks' });
     },
     async update_task(item) {
       try {
-      const { data, error } = await supabase
-        .from('task')
-        .update({ stat: !item.stat })
-        .eq('name', item.name);
-      if (error) {
+        const { data, error } = await supabase
+          .from('task')
+          .update({ stat: !item.stat })
+          .eq('name', item.name);
+        if (error) {
+          console.error(error);
+          // Handle error here
+        } else {
+          // Handle success here
+          Haptics.impact({ style: ImpactStyle.Light });
+          //Haptics.notification({ type: 'error' });
+
+        }
+      } catch (error) {
         console.error(error);
         // Handle error here
-      } else {
-        // Handle success here
       }
-      } catch (error) {
-      console.error(error);
-      // Handle error here
-      }
-    },
-    // SERVE VERAMENTE? NO ANZI
-    customFilter(value, query, item) {
-      return value != null &&
-        query != null &&
-        typeof value === 'string' &&
-        value.toString().indexOf(query) !== -1 ||
-        item.product != null &&
-        query != null &&
-        typeof item.product === 'string' &&
-        item.product.toString().indexOf(query) !== -1;
-    },
-    // ????
-    loadItems() {
-      this.loading = true
-      FakeAPI.fetch().then(({ items, total }) => {
-        this.boats = items
-        this.loading = false
-      })
     },
   }
 }

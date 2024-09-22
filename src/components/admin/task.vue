@@ -105,7 +105,7 @@
  */
 
 import { supabase } from '@/plugins/supabase';
-
+import { Preferences } from '@capacitor/preferences';
 export default {
   name: 'Task',
   data: () => ({
@@ -163,6 +163,7 @@ export default {
         .then(response => {
           this.desserts = response.data;
         });
+      Preferences.set({ key: 'selectedAdmin', value: 'task' });
     },
 
     editItem(item) {

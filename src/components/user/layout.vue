@@ -37,7 +37,7 @@
  * changeState: a method that sends an id to the server and changes the state
  */
 import { supabase } from '@/plugins/supabase';
-
+import { Preferences } from '@capacitor/preferences';
 export default {
   nome: 'TablePage',
   data: () => ({
@@ -51,12 +51,8 @@ export default {
     onMounted(async () => {
       // Controlla se l'utente è autenticato
       const user = supabase.auth.getUser();
+      
       console.log(user);
-      if (!user) {
-        // Reindirizza alla pagina di login
-        router.push('/login');
-        return;
-      }
 
       const { data, error } = await supabase.from('product').select();
 

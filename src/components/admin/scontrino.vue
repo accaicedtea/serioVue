@@ -1,7 +1,7 @@
 <template>
     <v-container>
-        <v-layout v-resize="onResize" column style="padding-top:56px">
-            <v-data-table-virtual :headers="headers" :items="items" height="400" item-value="id">
+        <v-layout v-resize="onResize" column>
+            <v-data-table-virtual :headers="headers" :items="items" height="400" item-value="id" class="elevation-1">
                 <template v-slot:item.actions="{ item }">
                     <v-btn icon small @click="decrementQuantity(item)" color="red">
                         <v-icon color="white">mdi-minus</v-icon>
@@ -45,7 +45,8 @@ import { supabase } from '@/plugins/supabase';
 import { jsPDF } from 'jspdf';
 import { Capacitor } from '@capacitor/core';
 import {Filesystem,Directory,Encoding} from '@capacitor/filesystem';
-
+import { Preferences } from '@capacitor/preferences';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 export default {
     data() {
         return {
@@ -88,10 +89,12 @@ export default {
             }
         },
         incrementQuantity(item) {
+            Haptics.impact({ style: ImpactStyle.Light });
             item.richiedi++;
         },
         decrementQuantity(item) {
             if (item.richiedi > 0) {
+                Haptics.impact({ style: ImpactStyle.Light });
                 item.richiedi--;
             }
         },
@@ -153,8 +156,8 @@ export default {
     },
     mounted() {
         this.fetchData();
+        
     },
 };
 </script>
 
-<style scoped></style>
