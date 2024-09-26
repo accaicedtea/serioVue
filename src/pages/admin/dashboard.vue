@@ -1,4 +1,6 @@
 <template>
+  <component :is="selectedMenuItem"></component>
+
   <v-bottom-navigation v-model="value" :bg-color="color">
     <v-btn v-for="item in menuItems" :key="item.value" @click="selectMenuItem(item.value)">
       <v-icon>{{ item.icon }}</v-icon>
@@ -10,8 +12,9 @@
     </v-btn>
   </v-bottom-navigation>
 
-  <component :is="selectedMenuItem"></component>
 </template>
+  
+
 
 <script>
 /**

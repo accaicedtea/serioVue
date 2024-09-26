@@ -10,45 +10,29 @@
                         <v-icon color="white">mdi-plus</v-icon>
                     </v-btn>
                 </template>
+                <template v-slot:item.price="{ item }">
+                    {{ item.price ?? 0 }}
+                </template>
+                <template v-slot:item.quantita="{ item }">
+                    {{ item.quantita ?? 0 }}
+                </template>
+                <template v-slot:item.richiedi="{ item }">
+                    {{ item.richiedi ?? 0 }}
+                </template>
             </v-data-table-virtual>
         </v-layout>
         <v-btn @click="generateReceipt" color="blue">Genera Scontrino</v-btn>
     </v-container>
-
-    
 </template>
 
 <script>
-/**
- * @data
- * - dialog: Boolean - Represents the visibility of a dialog.
- * - isMobile: Boolean - Indicates whether the current device is a mobile device or not.
- * - headers: Array - An array of objects representing the table headers.
- *   - title: String - The title of the header.
- *   - align: String - The alignment of the header.
- *   - key: String - The key used to access the corresponding data in the items array.
- *   - sortable: Boolean - Indicates whether the header is sortable or not.
- * - items: Array - An array of objects representing the table rows.
- *
- * @dependencies
- * - supabase: Object - The supabase object imported from '@/plugins/supabase'.
- * - jsPDF: Object - The jsPDF object imported from 'jspdf'.
- *
- * @methods
- * - onResize: A method that is called when the window is resized. It updates the isMobile property based on the window width.
- * - fetchData: A method that fetches data from the 'scontrinoo' table using the supabase object and updates the items array.
- * - generateReceipt: A method that generates a receipt using the jsPDF library. It creates a PDF document, adds text and tables to it, and saves the file.
- *
- * @mounted
- * - Calls the fetchData method to fetch data when the component is mounted.
- */
-
 import { supabase } from '@/plugins/supabase';
 import { jsPDF } from 'jspdf';
 import { Capacitor } from '@capacitor/core';
-import {Filesystem,Directory,Encoding} from '@capacitor/filesystem';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Preferences } from '@capacitor/preferences';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
+
 export default {
     data() {
         return {
@@ -71,10 +55,7 @@ export default {
     },
     methods: {
         onResize() {
-            if (window.innerWidth < 769)
-                this.isMobile = true;
-            else
-                this.isMobile = false;
+            this.isMobile = window.innerWidth < 769;
             console.log(this.isMobile);
         },
         async fetchData() {
@@ -85,7 +66,12 @@ export default {
                 if (error) {
                     throw new Error(error.message);
                 }
-                this.items = items;
+                this.items = items.map(item => ({
+                    ...item,
+                    price: item.price ?? 0,
+                    quantita: item.quantita ?? 0,
+                    richiedi: item.richiedi ?? 0,
+                })).sort((a, b) => b.richiedi - a.richiedi); // Sort by 'richiedi' in descending order
             } catch (error) {
                 console.error('Errore nel recupero dei dati:', error);
             }
@@ -126,8 +112,8 @@ export default {
                     const total = item.richiedi * item.price;
                     grandTotal += total;
                     doc.text(item.name, 10, y);
-                    doc.text(item.price.toString() + "€", 10 + columnWidths[0], y);
-                    doc.text(item.richiedi.toString(), 10 + columnWidths[0] + columnWidths[1], y);
+                    doc.text((item.price ?? 0).toString() + "€", 10 + columnWidths[0], y);
+                    doc.text((item.richiedi ?? 0).toString(), 10 + columnWidths[0] + columnWidths[1], y);
                     doc.text(total.toFixed(2) + "€", 10 + columnWidths[0] + columnWidths[1] + columnWidths[2], y);
                     y += 10;
                 }
@@ -161,8 +147,6 @@ export default {
     },
     mounted() {
         this.fetchData();
-        
     },
 };
 </script>
-

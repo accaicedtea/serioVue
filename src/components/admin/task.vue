@@ -159,7 +159,7 @@ export default {
       this.desserts;
       supabase
         .from('task')
-        .select('name, category, stat')
+        .select('id, name, category, stat')
         .then(response => {
           this.desserts = response.data;
         });
@@ -170,6 +170,7 @@ export default {
       this.editedIndex = this.desserts.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
+
     },
 
     deleteItem(item) {
@@ -179,7 +180,17 @@ export default {
     },
 
     deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1)
+      supabase
+      .from('task')
+      .delete()
+      .eq('id', this.editedItem.id)
+      .then(() => {
+        this.desserts.splice(this.editedIndex, 1)
+        console.log('Task deleted');
+      })
+      .catch(error => {
+        console.error('Error deleting task:', error);
+      });
       this.closeDelete()
     },
 
@@ -202,14 +213,29 @@ export default {
     save() {
       if (this.editedIndex > -1) {
         Object.assign(this.desserts[this.editedIndex], this.editedItem)
+        console.log(this.editedItem.id)
+        supabase
+          .from('task')
+          .update({
+            name: this.editedItem.name,
+            category: this.editedItem.category,
+            stat: this.editedItem.stat
+          })
+          .eq('id', this.editedItem.id)
+          .then(status => {
+            console.log('Task updated');
+          })
+          .catch(error => {
+            console.error('Error updating task:', error);
+          });
       } else {
         if (this.editedItem.name && this.editedItem.category) {
           this.desserts.push(this.editedItem);
           supabase
             .from('task')
             .insert([{
-              name: "ZZZZZZZZZZZZZZZZZZZZZZZZZ",
-              category: 1,
+              name: this.editedItem.name,
+              category: this.editedItem.category,
               stat: false
             }
             ])

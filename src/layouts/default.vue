@@ -8,6 +8,8 @@
   </v-app-bar>
 
   <router-view />
+
+  
 </template>
 
 <script>
@@ -24,13 +26,17 @@ export default {
       rail: true,
       auth: false, // Initialize auth as false
       varr: '',
-      currentDateTime: '',
+      currentDateTime: ''
     };
   },
   async created() {
     await this.checkUser();
     this.updateDateTime();
     setInterval(this.updateDateTime, 1000); // Update every second
+    const { data, error } = await supabase.auth.getSession()
+    if(!data.session) {
+      await Preferences.clear();
+    }
   },
   watch: {
     auth(newVal) {

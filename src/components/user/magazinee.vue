@@ -126,25 +126,6 @@ export default {
       else if (quantity >= 1 && quantity <= 9) return 'orange-lighten-1'
       else return 'red-darken-3'
     },
-    // SERVE VERAMENTO? NO ANZI
-    customFilter(value, query, item) {
-      return value != null &&
-        query != null &&
-        typeof value === 'string' &&
-        value.toString().indexOf(query) !== -1 ||
-        item.product != null &&
-        query != null &&
-        typeof item.product === 'string' &&
-        item.product.toString().indexOf(query) !== -1;
-    },
-    //????
-    loadItems() {
-      this.loading = true
-      FakeAPI.fetch().then(({ items, total }) => {
-        this.boats = items
-        this.loading = false
-      })
-    },
   }
 }
 </script>

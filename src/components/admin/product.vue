@@ -19,15 +19,15 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col>
-                    <v-text-field v-model="editedItem.name" label="Name"></v-text-field>
-                  </v-col>
-                  <v-col>
+                    <v-col>
+                    <v-text-field v-model="editedItem.name" label="Nome"></v-text-field>
+                    </v-col>
+                    <v-col>
                     <v-text-field v-model="editedItem.price" label="Prezzo"></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field v-model="editedItem.max_quantity" label="Quanità massima"></v-text-field>
-                  </v-col>
+                    </v-col>
+                    <v-col>
+                    <v-text-field v-model="editedItem.max_quantity" label="Quantità massima"></v-text-field>
+                    </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -170,9 +170,18 @@ export default {
       this.desserts;
       supabase
         .from('product')
-        .select('name, price, max_quantity')
+        .select('id, name, price, max_quantity')
         .then(response => {
-          this.desserts = response.data;
+            this.desserts = response.data.map(item => ({
+            ...item,
+            price: item.price ?? 0,
+            max_quantity: item.max_quantity ?? 0,
+            })).sort((a, b) => {
+            if (a.price === b.price) {
+              return b.max_quantity - a.max_quantity;
+            }
+            return b.price - a.price;
+            });
         });
       Preferences.set({ key: 'selectedAdmin', value: 'product' });
     },
@@ -213,25 +222,39 @@ export default {
     save() {
       if (this.editedIndex > -1) {
         Object.assign(this.desserts[this.editedIndex], this.editedItem)
+        supabase
+          .from('product')
+            .update({
+            name: this.editedItem.name,
+            price: parseFloat(this.editedItem.price),
+            max_quantity: parseInt(this.editedItem.max_quantity, 10)
+            })
+          .eq('id', this.editedItem.id)
+          .then(response => {
+            console.log('Product updated');
+          })
+          .catch(error => {
+            console.error('Error updating product:', error);
+          });
       } else {
-        if (this.editedItem.name && this.editedItem.category) {
+        if (this.editedItem.name && this.editedItem.price && this.editedItem.max_quantity) {
           this.desserts.push(this.editedItem);
           supabase
             .from('product')
             .insert([{
-              name: "ZZZZZZZZZZZZZZZZZZZZZZZZZ",
-              category: 1,
-              stat: false
-            }
-            ])
-            .then(stauts => {
-              console.log('New task created');
+              name: this.editedItem.name,
+              price: parseFloat(this.editedItem.price),
+              max_quantity: parseInt(this.editedItem.max_quantity, 10)
+            }])
+            .then(response => {
+              console.log('New product created');
             })
             .catch(error => {
-              console.error('Error creating task:', error);
+              console.error('Error creating product:', error);
             });
         }
       }
+
       this.close()
     },
   },

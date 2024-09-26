@@ -1,4 +1,4 @@
-<template >
+<template>
   <v-data-table :headers="headers" :items="desserts" :sort-by="[{ key: 'name', order: 'asc' }]">
     <template v-slot:top>
       <v-toolbar flat>
@@ -111,11 +111,11 @@ import { supabase } from '@/plugins/supabase';
 import { Preferences } from '@capacitor/preferences';
 export default {
   name: 'Magazine',
-  
+
   data: () => ({
     dialog: false,
     dialogDelete: false,
-    
+
     headers: [
       {
         title: 'Name',
@@ -154,14 +154,14 @@ export default {
 
   created() {
     this.initialize()
-    
+
   },
 
   methods: {
     initialize() {
       this.desserts;
       console.log("query");
-      supabase.from('magazine').select('name, mq').then(response => {
+      supabase.from('magazine').select('id, name, mq').then(response => {
         this.desserts = response.data;
       });
       Preferences.set({ key: 'selectedAdmin', value: 'magazine' });
@@ -182,6 +182,17 @@ export default {
     deleteItemConfirm() {
       this.desserts.splice(this.editedIndex, 1)
       this.closeDelete()
+      supabase
+      .from('magazine')
+      .delete()
+      .eq('id', this.editedItem.id)
+      .then(response => {
+        this.desserts.splice(this.editedIndex, 1)
+        console.log('Item deleted');
+      })
+      .catch(error => {
+        console.error('Error deleting item:', error);
+      });
     },
 
     close() {
@@ -200,25 +211,40 @@ export default {
       })
     },
 
-    async save() {
-      console.log("sto creando", this.editedItem);
+    save() {
       if (this.editedIndex > -1) {
         Object.assign(this.desserts[this.editedIndex], this.editedItem)
+        supabase
+          .from('magazine')
+          .update({
+            name: this.editedItem.name,
+            mq: parseInt(this.editedItem.mq)
+          })
+          .eq('id', this.editedItem.id)
+          .then(response => {
+            console.log('Magazine updated');
+          })
+          .catch(error => {
+            console.error('Error updating product:', error);
+          });
       } else {
         if (this.editedItem.name && this.editedItem.mq) {
           this.desserts.push(this.editedItem);
-          const { data, error } = await supabase
+          supabase
             .from('magazine')
-            .insert([
-              { name: this.editedItem.name, mq: this.editedItem.mq },
-            ])
-          if (error) {
-            console.error('Error inserting new row:', error.message)
-          } else {
-            console.log('Row inserted:', data)
-          }
+            .insert([{
+              name: this.editedItem.name,
+              mq: parseInt(this.editedItem.mq)
+            }])
+            .then(response => {
+              console.log('New product created');
+            })
+            .catch(error => {
+              console.error('Error creating product:', error);
+            });
         }
       }
+
       this.close()
     },
   },
