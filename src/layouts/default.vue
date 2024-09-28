@@ -1,16 +1,28 @@
 <template>
-  <v-app-bar>
-<v-toolbar-title>{{ currentDateTime }}</v-toolbar-title>
-    <v-spacer></v-spacer>
-    <v-btn :to="auth ? '/admin/dashboard' : '/'">Home</v-btn>
-    <v-btn v-if="auth" @click="logout" color="red" variant="tonal">Logout</v-btn>
-    <v-btn v-else to="/login" >Login</v-btn>
-  </v-app-bar>
+  <v-layout class="rounded rounded-md" :full-height="true">
+    <v-app-bar color="primary" prominent>
+      <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-  <router-view />
+      <v-toolbar-title>My files</v-toolbar-title>
 
-  
+      <v-spacer></v-spacer>
+
+    </v-app-bar>
+
+    <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'left' : undefined" temporary>
+      <v-list>
+        <v-list-item v-for="item in filteredItems" :key="item.value" @click="navigate(item.value)">
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-main class="d-flex align-center justify-center" style="min-height: 300px;">
+      <router-view />
+    </v-main>
+  </v-layout>
 </template>
+
 
 <script>
 import { supabase } from '@/plugins/supabase';
@@ -22,9 +34,28 @@ export default {
 
   data() {
     return {
-      drawer: true,
+      drawer: false,
+      group: null,
+      items: [
+        {
+          title: 'Home',
+          value: 'home',
+        },
+        {
+          title: 'Impostazioni',
+          value: 'settings',
+        },
+        {
+          title: 'Logout',
+          value: 'logout',
+        },
+        {
+          title: 'Login',
+          value: 'login',
+        },
+      ],
       rail: true,
-      auth: false, // Initialize auth as false
+      auth: false,
       varr: '',
       currentDateTime: ''
     };
@@ -34,8 +65,17 @@ export default {
     this.updateDateTime();
     setInterval(this.updateDateTime, 1000); // Update every second
     const { data, error } = await supabase.auth.getSession()
-    if(!data.session) {
+    if (!data.session) {
       await Preferences.clear();
+    }
+  },
+  computed: {
+    filteredItems() {
+      if (this.auth) {
+        return this.items.filter(item => item.value !== 'login');
+      } else {
+        return this.items.filter(item => item.value === 'home' || item.value === 'login');
+      }
     }
   },
   watch: {
@@ -45,9 +85,19 @@ export default {
       } else {
         this.varr = '';
       }
-    }
+    },
+    group() {
+      this.drawer = false
+    },
   },
   methods: {
+    navigate(value) {
+      if (value === 'logout') {
+        this.logout();
+      } else {
+        this.$router.push({ name: value });
+      }
+    },
     async checkUser() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user == null) {
@@ -69,7 +119,7 @@ export default {
           console.error(error);
         } else {
           console.log("Logout successful");
-          this.auth = false; 
+          this.auth = false;
           await Preferences.clear();
           console.log("Preferences cleared");
           // Goto login page

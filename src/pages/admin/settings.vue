@@ -1,7 +1,20 @@
 <template>
-  <Scontrino />
-</template>
+    <component :is="selectedMenuItem"></component>
   
+    <v-bottom-navigation v-model="value" :bg-color="color">
+      <v-btn v-for="item in menuItems" :key="item.value" @click="selectMenuItem(item.value)">
+        <v-icon>{{ item.icon }}</v-icon>
+        <span>{{ item.title }}</span>
+      </v-btn>
+      <v-btn @click="$router.push('/user/dashboard')">
+        <v-icon>mdi mdi-account</v-icon>
+        <span>User Area</span>
+      </v-btn>
+    </v-bottom-navigation>
+  
+  </template>
+
+
 
 
 <script>
@@ -26,19 +39,38 @@
  *   - value: The value of the menu item to be selected.
  * logout: Logs out the user.
  */
+import Magazine from "@/components/admin/magazine.vue";
+import Product from "@/components/admin/product.vue";
+import Task from "@/components/admin/task.vue";
 import Scontrino from "@/components/admin/scontrino.vue";
 import { supabase } from "@/plugins/supabase";
 import { Preferences } from '@capacitor/preferences';
 export default {
   data: () => ({
-    
-    
+    value: 0,
+    selectedMenuItem: "scontrino",
+    menuItems: [
+      { title: "Task", value: "task", icon: "mdi-calendar-check-outline" },
+      { title: "Prodotti", value: "product", icon: "mdi mdi-chart-ppf" },
+      { title: "Magazzini", value: "magazine", icon: "mdi mdi-magazine-rifle" },
+    ],
   }),
 
   components: {
+    Magazine,
+    Product,
+    Task,
     Scontrino,
   },
   computed: {
+    color() {
+      switch (this.value) {
+        case 0: return 'teal'
+        case 1: return 'brown'
+        case 2: return 'indigo'
+        default: return 'blue-grey'
+      }
+    },
   },
   async created() {
     try {
@@ -69,5 +101,3 @@ export default {
   },
 };
 </script>
-
-<style scoped></style>
