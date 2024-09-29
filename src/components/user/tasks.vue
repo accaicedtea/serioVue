@@ -1,15 +1,18 @@
 <template>
-  <v-text-field v-model="search" density="compact" label="Cerca attività" prepend-inner-icon="mdi-magnify"
-    variant="solo-filled" flat hide-details single-line class="mb-2"></v-text-field>
-
-  <v-divider></v-divider>
-
-  <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats" :search="search" item-value="name"
-    class="text-h5">
-    <template v-slot:item.stat="{ item }">
-      <v-checkbox v-model="item.stat" hide-details @click="update_task(item)"></v-checkbox>
-    </template>
-  </v-data-table-virtual>
+  <v-row >
+    <v-col cols="6" offset="6">
+      <v-text-field v-model="search" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined" hide-details
+      single-line></v-text-field>
+    </v-col>
+    <v-col cols="12">
+      <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats" :height="tableHeight" :search="search" item-value="name"
+        class="text-h5">
+        <template v-slot:item.stat="{ item }">
+          <v-checkbox v-model="item.stat" hide-details @click="update_task(item)"></v-checkbox>
+        </template>
+      </v-data-table-virtual>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -54,7 +57,11 @@ export default {
   created() {
     this.initialize()
   },
-
+  computed: {
+    tableHeight() {
+      return window.innerHeight - 200
+    }
+  },
   methods: {
     initialize() {
       this.boats;

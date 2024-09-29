@@ -183,16 +183,16 @@ export default {
       this.desserts.splice(this.editedIndex, 1)
       this.closeDelete()
       supabase
-      .from('magazine')
-      .delete()
-      .eq('id', this.editedItem.id)
-      .then(response => {
-        this.desserts.splice(this.editedIndex, 1)
-        console.log('Item deleted');
-      })
-      .catch(error => {
-        console.error('Error deleting item:', error);
-      });
+        .from('magazine')
+        .delete()
+        .eq('id', this.editedItem.id)
+        .then(response => {
+          this.desserts.splice(this.editedIndex, 1)
+          console.log('Item deleted');
+        })
+        .catch(error => {
+          console.error('Error deleting item:', error);
+        });
     },
 
     close() {

@@ -1,33 +1,35 @@
-<template>
-
-  <v-text-field v-model="search" density="compact" label="Cerca prodotto" prepend-inner-icon="mdi-magnify"
-    variant="solo-filled" flat hide-details single-line class="mb-2"
-    :class="{ 'deep-purple-lighten-2': true }"></v-text-field>
-
-  <v-divider></v-divider>
-  <v-container>
-    <v-data-table-virtual v-model:search="search" :headers="headers" :items="boats" :search="search"
-      item-value="prodotto" class="text-h5">
-      <template v-slot:item.quantity="{ value }">
-        <v-chip variant="elevated" size="x-large" :color="getColor(value)" class="text-center">
-          {{ value }}
-        </v-chip>
-      </template>
-      <template v-slot:item.actions="{ item }">
-        <v-btn rounded="lg" elevation="4" @click="incrementAndSave(item, 'inc')" text color="green-lighten-1"
-          class="me-2">
-          <v-icon>
-            mdi-plus
-          </v-icon>
-        </v-btn>
-        <v-btn @click="incrementAndSave(item, 'dec')" text color="red-accent-4">
-          <v-icon>
-            mdi-minus
-          </v-icon>
-        </v-btn>
-      </template>
-    </v-data-table-virtual>
-  </v-container>
+<template v-slot:text>
+  <v-row no-gutters>
+    <v-col cols="6" offset="6">
+      <v-text-field v-model="search" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined" hide-details
+        single-line></v-text-field>
+    </v-col>
+    <v-col cols="12">
+      <v-data-table-virtual :headers="headers" :items="boats" :search="search" :height="tableHeight" density="compact">
+        <template v-slot:item.magazine="{ item }">
+          <span style="font-size: 20px;">{{ item.magazine }}</span>
+        </template>
+        <template v-slot:item.product="{ item }">
+          <span style="font-size: 20px;">{{ item.product }}</span>
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <v-row>
+            <v-col cols="2">
+              <v-btn @click="incrementAndSave(item, 'dec')" color="red darken-1" style="font-size: 16px;">-</v-btn>
+            </v-col>
+            <v-col cols="4" class="d-flex justify-center">
+              <v-chip :color="getColor(item.quantity)" size="large" variant="elevated" style="font-size: 16px;">
+                {{ item.quantity }}
+              </v-chip>
+            </v-col>
+            <v-col cols="2">
+              <v-btn @click="incrementAndSave(item, 'inc')" color="green lighten-1" style="font-size: 16px;">+</v-btn>
+            </v-col>
+          </v-row>
+        </template>
+      </v-data-table-virtual>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -68,10 +70,15 @@ export default {
           sortable: true
         },
         { title: 'Prodotto', key: 'product', sortable: true },
-        { title: 'Quantità', key: 'quantity', sortable: true },
         { title: 'Azioni', key: 'actions', sortable: false },
       ],
       boats: [],
+    }
+  },
+  computed: {
+    tableHeight() {
+      const footerHeight = 200; // Adjust this value based on your footer height
+      return `calc(100vh - ${footerHeight}px)`;
     }
   },
   created() {

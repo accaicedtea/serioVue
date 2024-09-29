@@ -42,13 +42,12 @@
 import Magazine from "@/components/admin/magazine.vue";
 import Product from "@/components/admin/product.vue";
 import Task from "@/components/admin/task.vue";
-import Scontrino from "@/components/admin/scontrino.vue";
 import { supabase } from "@/plugins/supabase";
 import { Preferences } from '@capacitor/preferences';
 export default {
   data: () => ({
     value: 0,
-    selectedMenuItem: "scontrino",
+    selectedMenuItem: "task",
     menuItems: [
       { title: "Task", value: "task", icon: "mdi-calendar-check-outline" },
       { title: "Prodotti", value: "product", icon: "mdi mdi-chart-ppf" },
@@ -60,7 +59,6 @@ export default {
     Magazine,
     Product,
     Task,
-    Scontrino,
   },
   computed: {
     color() {

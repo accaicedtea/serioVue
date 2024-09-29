@@ -1,28 +1,34 @@
 <template>
-    <v-container>
-        <v-layout v-resize="onResize" column>
-            <v-data-table-virtual :headers="headers" :items="items" height="400" item-value="id" class="elevation-1">
-                <template v-slot:item.actions="{ item }">
-                    <v-btn icon small @click="decrementQuantity(item)" color="red">
+    <v-data-table-virtual :headers="headers" :items="items" height="400" item-value="id" class="elevation-1">
+        <template v-slot:item.actions="{ item }">
+            <v-row justify="center">
+                <v-col cols="6" class=" justify-center">
+                    <v-btn :size="isMobile ? 'small' : 'default'" @click="decrementQuantity(item)" color="red">
                         <v-icon color="white">mdi-minus</v-icon>
                     </v-btn>
-                    <v-btn icon small @click="incrementQuantity(item)" color="green">
+                </v-col>
+                <v-col cols="6" class="justify-center">
+                    <v-btn :size="isMobile ? 'small' : 'default'" @click="incrementQuantity(item)" color="green">
                         <v-icon color="white">mdi-plus</v-icon>
                     </v-btn>
-                </template>
-                <template v-slot:item.price="{ item }">
-                    {{ item.price ?? 0 }}
-                </template>
-                <template v-slot:item.quantita="{ item }">
-                    {{ item.quantita ?? 0 }}
-                </template>
-                <template v-slot:item.richiedi="{ item }">
-                    {{ item.richiedi ?? 0 }}
-                </template>
-            </v-data-table-virtual>
-        </v-layout>
-        <v-btn @click="generateReceipt" color="blue">Genera Scontrino</v-btn>
-    </v-container>
+                </v-col>
+            </v-row>
+        </template>
+        <template v-slot:item.richiedi="{ item }">
+            {{ item.richiedi ?? 0 }}
+        </template>
+    </v-data-table-virtual>
+
+    <v-btn @click="generateReceipt" color="lime-lighten-2" class="mt-1">Genera ordine</v-btn>
+    <v-snackbar v-model="snackbar" :timeout="timeout" :color="getSBColor()">
+        {{ text }}
+        <template v-slot:actions>
+            <v-btn variant="text" @click="snackbar = false">
+                Chiudi
+            </v-btn>
+        </template>
+    </v-snackbar>
+
 </template>
 
 <script>
@@ -33,27 +39,27 @@ import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Preferences } from '@capacitor/preferences';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
+
 export default {
     data() {
         return {
+            snackbar: false,
+            timeout: 2000,
             dialog: false,
             isMobile: false,
+            text: '',
             headers: [
-                {
-                    title: 'Id',
-                    align: 'start',
-                    key: 'id'
-                },
-                { title: 'Nome', key: 'name', sortable: true },
-                { title: 'Prezzo', key: 'price', sortable: true },
-                { title: 'qt. Massima', key: 'quantita', sortable: true },
-                { title: 'qt. da ordinare', key: 'richiedi', sortable: false },
-                { title: 'Azioni', key: 'actions', sortable: false },
+                { title: 'Nome', key: 'name', sortable: true, width: '30%' },
+                { title: 'qt. da ordinare', key: 'richiedi', sortable: false, width: '20%' },
+                { title: 'Azioni', key: 'actions', sortable: false, width: '50%' },
             ],
             items: [],
         };
     },
     methods: {
+        getSBColor() {
+            return this.text.includes('Errore') ? 'red' : 'green';
+        },
         onResize() {
             this.isMobile = window.innerWidth < 769;
             console.log(this.isMobile);
@@ -86,7 +92,7 @@ export default {
                 item.richiedi--;
             }
         },
-        async generateReceipt() {
+        generatePDF() {
             const doc = new jsPDF();
             doc.setFontSize(10);
             doc.text('Scontrino', 10, 10);
@@ -127,26 +133,54 @@ export default {
             const fileName = `ordine-${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}-ordine.pdf`;
 
             // Save the file
-            if (Capacitor.isNativePlatform()) {
-                // For Android and iOS devices, use the Capacitor Filesystem plugin to save the file
-                Filesystem.writeFile({
-                    path: "test.pdf",
-                    data: doc.output(),
-                    directory: Directory.Documents,
-                    encoding: Encoding.UTF8,
-                }).then(() => {
-                    console.log('File saved successfully');
-                }).catch((error) => {
-                    console.error('Error saving file:', error);
-                });
-            } else {
-                // For other devices, use the built-in save function of jsPDF
-                doc.save(fileName);
+            const pdfOutput = doc.output('datauristring');
+        },
+        async generateReceipt() {
+            // Generate PDF
+            // save order to database
+            try {
+                const orderedItems = this.items.filter(item => item.richiedi > 0);
+                const totalAmount = orderedItems.reduce((sum, item) => sum + (item.price * item.richiedi), 0);
+                const itemIds = orderedItems.map(item => item.id);
+                const quantities = orderedItems.map(item => item.richiedi);
+
+                const { data, error } = await supabase
+                    .from('order')
+                    .insert([
+                        {
+                            total: totalAmount,
+                            item_ordered: itemIds,
+                            qt_ordered: quantities,
+                            ordered_at: new Date(),
+                        }
+                    ]);
+
+                if (error) {
+                    console.error('Errore: nel salvataggio dell\'ordine sono quaa:', error);
+
+                    this.text = 'Errore: nel salvataggio dell\'ordine (NON SI POSSONO FARE PIÙ ORDINI IN UN GIORNO)';
+
+                    this.snackbar = true;
+                } else {
+
+                    this.text = 'Ordine salvato con successo';
+
+                    this.snackbar = true;
+                }
+            } catch (error) {
+                console.error('Errore nel salvataggio dell\'ordine: sono quiii', error);
+                this.text = 'Errore: nel salvataggio dell\'ordine';
+                this.snackbar = true;
             }
         },
     },
     mounted() {
         this.fetchData();
+        window.addEventListener('resize', this.onResize);
+        this.onResize(); // Initial check
+    },
+    beforeDestroy() {
+        window.removeEventListener('resize', this.onResize);
     },
 };
 </script>

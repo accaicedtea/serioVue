@@ -39,11 +39,11 @@ export default {
       items: [
         {
           title: 'Home',
-          value: 'home',
+          value: '/',
         },
         {
           title: 'Impostazioni',
-          value: 'settings',
+          value: '/admin/settings',
         },
         {
           title: 'Logout',

@@ -4,10 +4,6 @@
       <v-icon>{{ item.icon }}</v-icon>
       <span>{{ item.title }}</span>
     </v-btn>
-    <v-btn @click="$router.push('/admin/dashboard')">
-      <v-icon>mdi mdi-account</v-icon>
-      <span>Admin Area</span>
-    </v-btn>
   </v-bottom-navigation>
 
   <component :is="selectedMenuItem" ></component>

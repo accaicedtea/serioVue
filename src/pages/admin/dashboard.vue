@@ -1,7 +1,42 @@
 <template>
-  <Scontrino />
+  <v-container fluid class="bg-brown-lighten-5">
+    <v-row class="pr-2 pl-2" no-gutters>
+      <v-col cols="12" md="7" class="mb-1">
+        <v-card hover>
+          <v-card-item>
+            <v-card-title>
+              Card title
+            </v-card-title>
+
+            <v-card-subtitle>
+              Card subtitle secondary text
+            </v-card-subtitle>
+          </v-card-item>
+
+          <v-card-text>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua.
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="1"></v-col>
+      <v-col cols="12" md="4">
+        <OrderExpense />
+      </v-col>
+
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="8">
+        <Scontrino />
+      </v-col>
+      <v-col cols="12" md="4">
+        <LastOrder />
+      </v-col>
+    </v-row>
+  </v-container>
+
 </template>
-  
+
 
 
 <script>
@@ -27,18 +62,34 @@
  * logout: Logs out the user.
  */
 import Scontrino from "@/components/admin/scontrino.vue";
+import LastOrder from "@/components/admin/last-order.vue";
 import { supabase } from "@/plugins/supabase";
 import { Preferences } from '@capacitor/preferences';
+import OrderExpense from "@/components/admin/order-expense.vue";
 export default {
   data: () => ({
-    
-    
+    value: [
+      423,
+      446,
+      675,
+      510,
+      590,
+      610,
+      760,
+    ],
+
   }),
 
   components: {
     Scontrino,
+    LastOrder,
+    OrderExpense
   },
   computed: {
+    tableHeight() {
+      const footerHeight = 0; // Adjust this value based on your footer height
+      return `calc(100vh - ${footerHeight}px)`;
+    }
   },
   async created() {
     try {
@@ -52,6 +103,7 @@ export default {
     }
   },
   methods: {
+    
     selectMenuItem(value) {
       this.selectedMenuItem = value;
     },
