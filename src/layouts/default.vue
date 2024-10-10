@@ -3,7 +3,7 @@
     <v-app-bar color="primary" prominent>
       <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>My files</v-toolbar-title>
+      <v-toolbar-title>{{ pageTitle }}</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -17,12 +17,11 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-main class="d-flex align-center justify-center" style="min-height: 300px;">
+    <v-main class="d-flex  justify-center" style="min-height: 300px;">
       <router-view />
     </v-main>
   </v-layout>
 </template>
-
 
 <script>
 import { supabase } from '@/plugins/supabase';
@@ -44,6 +43,14 @@ export default {
         {
           title: 'Impostazioni',
           value: '/admin/settings',
+        },
+        {
+          title: 'More',
+          value: '/admin/more',
+        },
+        {
+          title: 'Dashboard',
+          value: '/admin/dashboard',
         },
         {
           title: 'Logout',
@@ -75,6 +82,21 @@ export default {
         return this.items.filter(item => item.value !== 'login');
       } else {
         return this.items.filter(item => item.value === 'home' || item.value === 'login');
+      }
+    },
+    pageTitle() {
+      const routeName = this.$route.name;
+      switch (routeName) {
+        case 'settings':
+          return 'impostazioni';
+        case 'home':
+          return 'Home';
+        case 'more':
+          return 'More';
+        case 'dashboard':
+          return 'Dashboard';
+        default:
+          return 'My files';
       }
     }
   },

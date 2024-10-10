@@ -5,26 +5,30 @@
         single-line></v-text-field>
     </v-col>
     <v-col cols="12">
-      <v-data-table-virtual :headers="headers" :items="boats" :search="search" :height="tableHeight" density="compact">
+      <v-data-table-virtual :headers="headers" :items="boats" :search="search" :height="tableHeight" density="compact" class="text-h6">
         <template v-slot:item.magazine="{ item }">
-          <span style="font-size: 20px;">{{ item.magazine }}</span>
+          <span>{{ item.magazine }}</span>
         </template>
+        
         <template v-slot:item.product="{ item }">
-          <span style="font-size: 20px;">{{ item.product }}</span>
+          <span>{{ item.product }}</span>
         </template>
+        
         <template v-slot:item.actions="{ item }">
-          <v-row>
-            <v-col cols="2">
-              <v-btn @click="incrementAndSave(item, 'dec')" color="red darken-1" style="font-size: 16px;">-</v-btn>
-            </v-col>
-            <v-col cols="4" class="d-flex justify-center">
-              <v-chip :color="getColor(item.quantity)" size="large" variant="elevated" style="font-size: 16px;">
-                {{ item.quantity }}
-              </v-chip>
-            </v-col>
-            <v-col cols="2">
-              <v-btn @click="incrementAndSave(item, 'inc')" color="green lighten-1" style="font-size: 16px;">+</v-btn>
-            </v-col>
+          <v-row class="d-flex flex-column flex-md-row">
+        <v-col cols="12" md="2" xs="4">
+          <v-btn @click="incrementAndSave(item, 'dec')" color="red darken-1">-</v-btn>
+        </v-col>
+        
+        <v-col cols="12" md="4" xs="4" class="d-flex justify-center">
+          <v-chip :color="getColor(item.quantity)" size="large" variant="elevated">
+            {{ item.quantity }}
+          </v-chip>
+        </v-col>
+        
+        <v-col cols="12" md="4" xs="4">
+          <v-btn @click="incrementAndSave(item, 'inc')" color="green lighten-1">+</v-btn>
+        </v-col>
           </v-row>
         </template>
       </v-data-table-virtual>

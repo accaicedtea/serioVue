@@ -2,22 +2,7 @@
   <v-container fluid class="bg-brown-lighten-5">
     <v-row class="pr-2 pl-2" no-gutters>
       <v-col cols="12" md="7" class="mb-1">
-        <v-card hover>
-          <v-card-item>
-            <v-card-title>
-              Card title
-            </v-card-title>
 
-            <v-card-subtitle>
-              Card subtitle secondary text
-            </v-card-subtitle>
-          </v-card-item>
-
-          <v-card-text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua.
-          </v-card-text>
-        </v-card>
       </v-col>
       <v-col cols="12" md="1"></v-col>
       <v-col cols="12" md="4">

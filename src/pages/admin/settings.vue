@@ -1,18 +1,21 @@
 <template>
-    <component :is="selectedMenuItem"></component>
-  
-    <v-bottom-navigation v-model="value" :bg-color="color">
-      <v-btn v-for="item in menuItems" :key="item.value" @click="selectMenuItem(item.value)">
-        <v-icon>{{ item.icon }}</v-icon>
-        <span>{{ item.title }}</span>
-      </v-btn>
-      <v-btn @click="$router.push('/user/dashboard')">
-        <v-icon>mdi mdi-account</v-icon>
-        <span>User Area</span>
-      </v-btn>
-    </v-bottom-navigation>
-  
-  </template>
+  <v-sheet
+      class="d-flex align-start mb-6 bg-surface-variant"
+      height="100"
+    >
+  <component :is="selectedMenuItem"></component>
+</v-sheet>
+  <v-bottom-navigation v-model="value" :bg-color="color">
+    <v-btn v-for="item in menuItems" :key="item.value" @click="selectMenuItem(item.value)">
+      <v-icon>{{ item.icon }}</v-icon>
+      <span>{{ item.title }}</span>
+    </v-btn>
+    <v-btn @click="$router.push('/user/dashboard')">
+      <v-icon>mdi mdi-account</v-icon>
+      <span>User Area</span>
+    </v-btn>
+  </v-bottom-navigation>
+</template>
 
 
 

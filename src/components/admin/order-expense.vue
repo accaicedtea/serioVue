@@ -13,7 +13,7 @@
 
     <v-card-text>
       <div class="text-h4 font-weight-thin">
-        Sales Last 24h
+        Riepilogo spese
       </div>
     </v-card-text>
 
@@ -21,7 +21,7 @@
 
     <v-card-actions class="justify-center">
       <v-btn variant="text" block>
-        Go to Report
+        NO WAY
       </v-btn>
     </v-card-actions>
   </v-card>
